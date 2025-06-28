@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.3.10 
+  smooth_page_indicator: ^1.2.1
 
 
 dev_dependencies:
@@ -64,6 +65,11 @@ flutter:
      - assets/images/logo.png
      - assets/images/splash.png
      - assets/images/splashicon.png
+     - assets/images/onboardimage1.png
+     - assets/images/onboardimage2.png
+     - assets/images/onboardimage3.png
+
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
