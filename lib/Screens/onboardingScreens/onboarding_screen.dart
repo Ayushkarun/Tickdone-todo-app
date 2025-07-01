@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_data.dart';
+import 'package:tickdone/Screens/Login/login.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,7 +13,8 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   static final PageController _pageController = PageController(initialPage: 0);
   // ignore: prefer_final_fields
-  List<Widget> _onBoardingpages = [
+  List<Widget> _buildonBoardingpages (BuildContext context) { 
+    return[
     Onboardingcard(
       image: 'assets/images/onboardimage1.png',
       title: 'Welcome',
@@ -45,9 +47,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       description:
           'Tick tasks as you go and stay focused.Get things done right on time.',
       buttonText: "Get Started",
-      onPressed: () {},
+      onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Loginpage(),));
+      },
     ),
   ];
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,12 +67,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: PageView(
                 controller: _pageController,
-                children: _onBoardingpages,
+                children: _buildonBoardingpages(context),
               ),
             ),
             SmoothPageIndicator(
               controller: _pageController,
-              count: _onBoardingpages.length,
+              count: _buildonBoardingpages(context).length,
               onDotClicked: (index) {
                 _pageController.animateToPage(
                   index,

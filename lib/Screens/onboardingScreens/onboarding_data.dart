@@ -64,7 +64,8 @@ class Onboardingcard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: screenWidth * 0.04, // Responsive font size
+                    fontSize: screenWidth * 0.04,
+                     // Responsive font size
                   ),
                 ),
               ),

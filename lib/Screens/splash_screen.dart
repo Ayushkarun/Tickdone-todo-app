@@ -10,14 +10,16 @@ class SplashScreen extends StatefulWidget {
 
 //splash screen
 class _SplashScreenState extends State<SplashScreen> {
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 2),(){
-//intro screen
-      Navigator.pushReplacement(context,
-       MaterialPageRoute(builder: (context)=>const OnboardingScreen()),);
+    Future.delayed(Duration(seconds: 2), () {
+      //intro screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
     });
   }
 
@@ -47,19 +49,19 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-              SizedBox(height:18 ,),
+              SizedBox(height: 18),
               Image.asset(
                 "assets/images/logo.png",
                 width: screenwidth * 0.2,
                 height: screenheight * 0.15,
               ),
-           
+
               Text(
                 'TICKDONE',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  fontSize: 30,
+                  fontSize: screenwidth * 0.075,
                   letterSpacing: 1,
                 ),
               ),
@@ -68,8 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 'TICK A TASK, GET IT DONE.',
                 style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 8.5,
-            
+                  fontSize: screenwidth * 0.026,
                 ),
               ),
               //for space
@@ -81,12 +82,18 @@ class _SplashScreenState extends State<SplashScreen> {
                   children: [
                     Text(
                       'Version 1.0.0',
-                      style: TextStyle(fontSize: 10, color: Colors.white60,
-                      fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: screenwidth * 0.028,
+                        color: Colors.white60,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       'ALL RIGHTS RESERVED',
-                      style: TextStyle(fontSize: 8, color: Colors.white60),
+                      style: TextStyle(
+                        fontSize: screenwidth * 0.022,
+                        color: Colors.white60,
+                      ),
                     ),
                   ],
                 ),
