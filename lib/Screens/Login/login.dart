@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -10,23 +11,193 @@ class Loginpage extends StatefulWidget {
 class _LoginpageState extends State<Loginpage> {
   @override
   Widget build(BuildContext context) {
+    final screenheight = MediaQuery.of(context).size.height;
+    final screenwidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        child: SafeArea(
-          
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Login',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-              
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            height: screenheight,
+            padding: EdgeInsets.all(screenwidth * 0.07),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: screenheight * 0.1,
                 ),
-                
-              ),
-            ],
+                Text(
+                  'Welcome back',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenwidth * 0.065,
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.005),
+                Text(
+                  'Let’s finish those tasks!',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: screenwidth * 0.035,
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.03),
+                Text(
+                  'E-mail',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: screenwidth * 0.04,
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.009),
+                TextFormField(
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    prefixIcon: Icon(Icons.mail),
+                    hintText: 'Enter E-mail',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.02),
+                Text(
+                  'Password',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: screenwidth * 0.04,
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.009),
+                TextFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.password),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Enter Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.035),
+                Center(
+                  child: Container(
+                    height: screenwidth * 0.1,
+                    width: screenwidth * 0.65,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 28, 14, 111),
+                      ),
+                      child: Text(
+                        'Login',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenwidth * 0.045,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.025),
+                Center(
+                  child: Container(
+                    color: Colors.black,
+                    height: screenwidth * 0.1,
+                    width: screenwidth * 0.48,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/google.png',
+                            height: screenheight * 0.02,
+                          ),
+                          SizedBox(width: screenwidth * 0.015),
+                          Text(
+                            'Continue with Google',
+                            style: GoogleFonts.poppins(
+                              fontSize: screenwidth * 0.025,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: screenwidth * 0.03),
+                Center(
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        backgroundColor: Colors.black,
+                        fontSize: screenwidth * 0.027,
+                        color: const Color.fromARGB(104, 255, 255, 255),
+                      ),
+                    ),
+                  ),
+                ),
+                 Spacer(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.03),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Divider(color: Colors.white, thickness: 1),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenwidth * 0.02,
+                        ),
+                        child: Text(
+                          'or',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenwidth * 0.04, // Responsive text
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(color: Colors.white, thickness: 1),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenheight * 0.008),
+                Center(
+                  child: Container(
+                    height: screenwidth * 0.1,
+                    width: screenwidth * 0.85,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 28, 14, 111),
+                      ),
+                      child: Text(
+                        'Create an Account',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenwidth * 0.045,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

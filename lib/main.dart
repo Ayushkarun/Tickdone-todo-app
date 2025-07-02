@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tickdone/Screens/splash_screen.dart';
+import 'package:tickdone/Screens/splash%20screen/splash_screen.dart';
 
 void main()
 {

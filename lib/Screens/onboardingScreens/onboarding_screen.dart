@@ -13,52 +13,60 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   static final PageController _pageController = PageController(initialPage: 0);
   // ignore: prefer_final_fields
-  List<Widget> _buildonBoardingpages (BuildContext context) { 
-    return[
-    Onboardingcard(
-      image: 'assets/images/onboardimage1.png',
-      title: 'Welcome',
-      description: 'Your smart task manager – tick tasks, get things done.',
-      buttonText: "Next",
-      onPressed: () {
-        _pageController.animateToPage(
-          1,
-          duration: Durations.long1,
-          curve: Curves.linear,
-        );
-      },
-    ),
-    Onboardingcard(
-      image: 'assets/images/onboardimage2.png',
-      title: 'Stay Organized',
-      description: 'Easily manage your daily tasks.Plan smarter, live better.',
-      buttonText: "Next",
-      onPressed: () {
-        _pageController.animateToPage(
-          2,
-          duration: Durations.long1,
-          curve: Curves.linear,
-        );
-      },
-    ),
-    Onboardingcard(
-      image: 'assets/images/onboardimage3.png',
-      title: 'Track & Achieve',
-      description:
-          'Tick tasks as you go and stay focused.Get things done right on time.',
-      buttonText: "Get Started",
-      onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Loginpage(),));
-      },
-    ),
-  ];
+  List<Widget> _buildonBoardingpages(BuildContext context) {
+    return [
+      Onboardingcard(
+        image: 'assets/images/onboardimage1.png',
+        title: 'Welcome',
+        description:
+            'TickDone – your smart task manager. Simple, fast, and effective. Tick your tasks, get things done, and boost your day.',
+        buttonText: "Next",
+        onPressed: () {
+          _pageController.animateToPage(
+            1,
+            duration: Durations.long1,
+            curve: Curves.linear,
+          );
+        },
+      ),
+      Onboardingcard(
+        image: 'assets/images/onboardimage2.png',
+        title: 'Stay Organized',
+        description:
+            'Easily manage your daily tasks. Plan smarter, live better. Achieve more with less stress.',
+        buttonText: "Next",
+        onPressed: () {
+          _pageController.animateToPage(
+            2,
+            duration: Durations.long1,
+            curve: Curves.linear,
+          );
+        },
+      ),
+      Onboardingcard(
+        image: 'assets/images/onboardimage3.png',
+        title: 'Track & Achieve',
+        description:
+            'Tick tasks as you go and stay focused.Get things done right on time.',
+        buttonText: "Get Started",
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Loginpage()),
+          );
+        },
+      ),
+    ];
   }
+
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 50),
+        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.05),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Onboardingcard extends StatelessWidget {
   final String image;
@@ -49,9 +50,9 @@ class Onboardingcard extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: GoogleFonts.montserrat(
                   color: Colors.white,
-                  fontSize: screenWidth * 0.08, // Responsive font size
+                  fontSize: screenWidth * 0.08,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -62,10 +63,9 @@ class Onboardingcard extends StatelessWidget {
                 child: Text(
                   description,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: GoogleFonts.lato(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,
-                     // Responsive font size
                   ),
                 ),
               ),
@@ -73,7 +73,7 @@ class Onboardingcard extends StatelessWidget {
           ),
 
           // Spacer to push button to bottom
-          const Spacer(),
+          SizedBox(height: screenHeight * 0.08),
 
           // Button Section
           Padding(
@@ -86,7 +86,14 @@ class Onboardingcard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30), // Curve amount
               ),
-              child: Text(buttonText, style: TextStyle(color: Colors.white)),
+              child: Text(
+                buttonText,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: screenWidth * 0.04,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
             ),
           ),
         ],
