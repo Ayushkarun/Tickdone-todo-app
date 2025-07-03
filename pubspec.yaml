@@ -37,6 +37,7 @@ dependencies:
   # flutter_native_splash: ^2.3.10 
   smooth_page_indicator: ^1.2.1
   google_fonts: ^6.2.1
+  flutter_screenutil: ^5.9.3
 
 
 dev_dependencies:

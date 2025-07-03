@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tickdone/Screens/Register/register.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -135,7 +136,7 @@ class _LoginpageState extends State<Loginpage> {
                     ),
                   ),
                 ),
-                SizedBox(width: screenwidth * 0.03),
+                SizedBox(width: screenwidth * 0.04),
                 Center(
                   child: TextButton(
                     onPressed: () {},
@@ -181,7 +182,10 @@ class _LoginpageState extends State<Loginpage> {
                     height: screenwidth * 0.1,
                     width: screenwidth * 0.85,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                        Navigator.push(context, MaterialPageRoute(builder:(context) => Register(),));
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 28, 14, 111),
                       ),

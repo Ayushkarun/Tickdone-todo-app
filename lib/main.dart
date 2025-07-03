@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tickdone/Screens/splash%20screen/splash_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main()
 {
@@ -11,10 +12,14 @@ class Tickdone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tickdone',
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    return ScreenUtilInit(
+      designSize: ScreenUtil.defaultSize,
+      builder: (context, child) => 
+      MaterialApp(
+        title: 'Tickdone',
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      ),
     );
   }
 }

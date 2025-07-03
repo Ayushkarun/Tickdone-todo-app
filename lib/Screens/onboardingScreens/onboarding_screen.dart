@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_data.dart';
 import 'package:tickdone/Screens/Login/login.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -15,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // ignore: prefer_final_fields
   List<Widget> _buildonBoardingpages(BuildContext context) {
     return [
-      Onboardingcard(
+      OnboardingCard(
         image: 'assets/images/onboardimage1.png',
         title: 'Welcome',
         description:
@@ -29,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           );
         },
       ),
-      Onboardingcard(
+      OnboardingCard(
         image: 'assets/images/onboardimage2.png',
         title: 'Stay Organized',
         description:
@@ -43,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           );
         },
       ),
-      Onboardingcard(
+      OnboardingCard(
         image: 'assets/images/onboardimage3.png',
         title: 'Track & Achieve',
         description:
@@ -52,7 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Loginpage()),
+            MaterialPageRoute(builder: (context) =>const Loginpage()),
           );
         },
       ),
@@ -61,12 +62,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight = MediaQuery.of(context).size.height;
+    // final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.05),
+        padding: EdgeInsets.symmetric(vertical: 0.05.sh), // 5% of screen height
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,9 +91,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
               effect: ExpandingDotsEffect(
                 activeDotColor: Colors.white, // dot for the current page
-                dotColor: Color(0xFF10083F), // dots for the other pages
-                dotHeight: 8,
-                dotWidth: 8,
+                dotColor:const Color(0xFF10083F), // dots for the other pages
+                dotHeight: 8.w,
+                dotWidth: 8.w,
                 expansionFactor: 3,
               ),
             ),

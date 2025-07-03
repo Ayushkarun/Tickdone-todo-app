@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Onboardingcard extends StatelessWidget {
+class OnboardingCard extends StatelessWidget {
   final String image;
   final String title;
   final String description;
   final String buttonText;
-  final Function onPressed;
+  final VoidCallback onPressed;
 
-  const Onboardingcard({
+  const OnboardingCard({
     super.key,
     required this.image,
     required this.title,
@@ -19,32 +20,21 @@ class Onboardingcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Screen height and width
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return SizedBox(
-      height: screenHeight * 0.85, // Slightly adjusted
-      width: screenWidth,
+      height: 0.85.sh,
+      width: 1.sw,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Image Section
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.1,
-              vertical: screenHeight * 0.05,
+              horizontal: 0.10.sw,
+              vertical: 0.05.sh,
             ),
-            child: Image.asset(
-              image,
-              fit: BoxFit.contain,
-              height: screenHeight * 0.35, // Image takes 35% of screen height
-            ),
+            child: Image.asset(image, fit: BoxFit.contain, height: 0.35.sh),
           ),
-
-          // Text Section
           Column(
             children: [
               Text(
@@ -52,46 +42,39 @@ class Onboardingcard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
                   color: Colors.white,
-                  fontSize: screenWidth * 0.08,
+                  fontSize: 28.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(
-                  screenWidth * 0.04,
-                ), // Responsive padding
+                padding: EdgeInsets.all(14.w),
                 child: Text(
                   description,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    color: Colors.white,
-                    fontSize: screenWidth * 0.04,
-                  ),
+                  style: GoogleFonts.lato(color: Colors.white, fontSize: 14.sp),
                 ),
               ),
             ],
           ),
 
-          // Spacer to push button to bottom
-          SizedBox(height: screenHeight * 0.08),
+          SizedBox(height: 0.08.sh),
 
-          // Button Section
           Padding(
-            padding: EdgeInsets.only(bottom: screenHeight * 0.03),
+            padding: EdgeInsets.only(bottom: 0.03.sh),
             child: MaterialButton(
-              onPressed: () => onPressed(),
+              onPressed: onPressed,
               color: const Color(0xFF10083F),
-              minWidth: screenWidth * 0.9,
-              height: screenHeight * 0.06,
+              minWidth: 0.9.sw,
+              height: 0.06.sh,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30), // Curve amount
+                borderRadius: BorderRadius.circular(30.r),
               ),
               child: Text(
                 buttonText,
                 style: GoogleFonts.poppins(
                   color: Colors.white,
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.bold
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

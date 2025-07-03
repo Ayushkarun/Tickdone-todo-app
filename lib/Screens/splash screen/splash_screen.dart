@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_screen.dart';
 
@@ -12,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
       //intro screen
@@ -22,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     });
   }
-
+///screenutil
   @override
   Widget build(BuildContext context) {
     //media query for icon

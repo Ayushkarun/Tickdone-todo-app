@@ -1,4 +1,104 @@
-flutter build apk to build apk
+flutter build apk 
+to build apk
+
+
+/////folder architecture flutter
+
+use svg image scalable vector graphics for images
+
+below buildcontext
+Size size=mediaquery.of(context).size;
+
+print(size);
+return scafffold();
+///
+
+now using layoutbuilder instead of scaffold
+//context means exact location of the screen or tree
+//tree means material app then scaffold
+//builder is going to build  a widget and it is going to attach in the tree in that context where you called
+builder build a widget and it is attached to the tree
+///constaraints is a variable in this we get layout height width
+and we checking the constraints width and based on that we check the screen small,l or tab
+
+
+// mobileSmall = 320,
+// mobileNormal = 375,
+// mobileLarge = 414,
+// mobileExtraLarge = 480,
+// tabletSmall = 600,
+// tabletNormal = 768,
+// tabletLarge = 850,
+// tabletExtraLarge = 900,
+// desktopSmall = 950,
+// desktopNormal = 1920,
+// desktopLarge = 3840,
+// desktopExtraLarge = 4096,
+
+its all width
+this the media break point the number
+eg till 320 its small screen break point or pixel,
+till 375 medium
+
+
+
+return Layoutbuilder(
+builder:(context,constraints){
+if(constraints.maxwidth>950){
+*1
+ return DesktopLayout();
+}
+else if(constraints.maxwidth>600)
+{
+*2
+return Tabletlayout();
+}
+else{
+return mobilelayout();
+}
+
+}
+ )
+
+to get size of screen
+
+
+
+*1//return DesktopLayout() this is not existing so we need to build this file desktop_layout.dart
+this is stateless widget in file import material and give the the stateless widget name DesktopLayout and return scaffold
+and give color for example and import in our current file
+
+*2 same like what we did in desktop layout
+
+////
+components folder
+inside that file
+mybutton_widget.dart
+stateless widget give name Mybutton and return container not scaffold height,width
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -218,6 +318,112 @@ class _LoginpageState extends State<Loginpage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+before screen util
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class Onboardingcard extends StatelessWidget {
+  final String image;
+  final String title;
+  final String description;
+  final String buttonText;
+  final Function onPressed;
+
+  const Onboardingcard({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.description,
+    required this.buttonText,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Screen height and width
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return SizedBox(
+      height: screenHeight * 0.85, // Slightly adjusted
+      width: screenWidth,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Image Section
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.1,
+              vertical: screenHeight * 0.05,
+            ),
+            child: Image.asset(
+              image,
+              fit: BoxFit.contain,
+              height: screenHeight * 0.35, // Image takes 35% of screen height
+            ),
+          ),
+
+          // Text Section
+          Column(
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: screenWidth * 0.08,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(
+                  screenWidth * 0.04,
+                ), // Responsive padding
+                child: Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.04,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Spacer to push button to bottom
+          SizedBox(height: screenHeight * 0.08),
+
+          // Button Section
+          Padding(
+            padding: EdgeInsets.only(bottom: screenHeight * 0.03),
+            child: MaterialButton(
+              onPressed: () => onPressed(),
+              color: const Color(0xFF10083F),
+              minWidth: screenWidth * 0.9,
+              height: screenHeight * 0.06,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30), // Curve amount
+              ),
+              child: Text(
+                buttonText,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: screenWidth * 0.04,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
