@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,92 +10,81 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-//splash screen
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      //intro screen
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
       );
     });
   }
-///screenutil
+
   @override
   Widget build(BuildContext context) {
-    //media query for icon
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: SafeArea(
         child: Container(
-          //for 2 color
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
+          width: 1.sw,
+          height: 1.sh,
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              //screen size
-              stops: [0.4, 0.6],
+              stops: [0.45, 0.55],
               colors: [Colors.black, Color(0xFF10083F)],
             ),
           ),
           child: Column(
-            ///center
             mainAxisAlignment: MainAxisAlignment.center,
-
             children: [
-              SizedBox(height: 18),
+              SizedBox(height: 18.h),
               Image.asset(
-                "assets/images/logo.png",
-                width: screenwidth * 0.2,
-                height: screenheight * 0.15,
+                "assets/images/Logo/logofinal.png",
+                width: 0.20.sw,
+                height: 0.15.sh,
               ),
-
               Text(
                 'TICKDONE',
                 style: TextStyle(
-                  fontWeight: FontWeight.w900,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: screenwidth * 0.075,
-                  letterSpacing: 1,
+                  fontSize: 27.sp,
+                  letterSpacing: 1.w,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 5.h),
               Text(
                 'TICK A TASK, GET IT DONE.',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: screenwidth * 0.026,
-                ),
-              ),
-              //for space
-              Spacer(),
+                style:TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white70, fontSize: 10.sp
+                )
 
+              ),
+              const Spacer(),
               Padding(
-                padding: EdgeInsets.only(bottom: 23.0),
+                padding: EdgeInsets.only(bottom: 23.h),
                 child: Column(
                   children: [
                     Text(
                       'Version 1.0.0',
                       style: TextStyle(
-                        fontSize: screenwidth * 0.028,
+                        fontFamily: 'Poppins',
+                        fontSize: 10.sp,
                         color: Colors.white60,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       'ALL RIGHTS RESERVED',
-                      style: TextStyle(
-                        fontSize: screenwidth * 0.022,
-                        color: Colors.white60,
-                      ),
+                      style: TextStyle
+                      (fontSize: 8.sp, 
+                      fontFamily: 'Poppins',
+                      color: Colors.white60),
                     ),
                   ],
                 ),

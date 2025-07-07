@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class OnboardingCard extends StatelessWidget {
   final String image;
@@ -40,7 +40,8 @@ class OnboardingCard extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: TextStyle(
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                   fontSize: 28.sp,
                   fontWeight: FontWeight.bold,
@@ -51,7 +52,7 @@ class OnboardingCard extends StatelessWidget {
                 child: Text(
                   description,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(color: Colors.white, fontSize: 14.sp),
+                  style:TextStyle(fontFamily: 'Poppins',color: Colors.white, fontSize: 14.sp),
                 ),
               ),
             ],
@@ -63,7 +64,7 @@ class OnboardingCard extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 0.03.sh),
             child: MaterialButton(
               onPressed: onPressed,
-              color: const Color(0xFF10083F),
+              color: const Color.fromARGB(255, 35, 21, 118),
               minWidth: 0.9.sw,
               height: 0.06.sh,
               shape: RoundedRectangleBorder(
@@ -71,7 +72,8 @@ class OnboardingCard extends StatelessWidget {
               ),
               child: Text(
                 buttonText,
-                style: GoogleFonts.poppins(
+                style: TextStyle(
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,

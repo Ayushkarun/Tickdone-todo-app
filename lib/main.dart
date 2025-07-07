@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tickdone/Screens/splash%20screen/splash_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main()
+void main() async
 {
-  runApp(Tickdone());
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await Future.delayed(Duration(seconds: 3),);
+  FlutterNativeSplash.remove();
+  runApp(const Tickdone());
 }
 
 class Tickdone extends StatelessWidget {

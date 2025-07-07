@@ -91,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
               effect: ExpandingDotsEffect(
                 activeDotColor: Colors.white, // dot for the current page
-                dotColor:const Color(0xFF10083F), // dots for the other pages
+                dotColor:const Color.fromARGB(255, 255, 255, 255), // dots for the other pages
                 dotHeight: 8.w,
                 dotWidth: 8.w,
                 expansionFactor: 3,
