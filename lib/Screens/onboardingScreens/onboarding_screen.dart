@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_data.dart';
-import 'package:tickdone/Screens/Login/login.dart';
+import 'package:tickdone/Screens/Register/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -53,7 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>const Loginpage()),
+            MaterialPageRoute(builder: (context) =>const Register()),
           );
         },
       ),
