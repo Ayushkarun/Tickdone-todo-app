@@ -1,6 +1,11 @@
 flutter build apk 
 to build apk
 
+AIzaSyAabkwoAsDrqHHjd83GebVChCo4Maqp6aU
+
+test
+tickdone@gmail.com
+tick123
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

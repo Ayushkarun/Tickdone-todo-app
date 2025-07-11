@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Login/login.dart';
-import 'package:tickdone/Screens/home.dart';
+import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 
 class Register extends StatefulWidget {
@@ -189,6 +189,8 @@ final key=GlobalKey<FormState>();
                       onPressed: () {
                       if(key.currentState!.validate()){
                         signUp();
+                        emailController.clear();
+                        passwordController.clear();
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Home(),));
                       }
                       },

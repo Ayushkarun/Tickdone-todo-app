@@ -1,9 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tickdone/Screens/Register/register.dart';
 import 'package:http/http.dart' as http;
-import 'package:tickdone/Screens/home.dart';
+import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 
 class Loginpage extends StatefulWidget {
@@ -14,13 +13,25 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
-final TextEditingController emailcontrollerlogin=TextEditingController();
-final TextEditingController passwordControllerlogin=TextEditingController();
+  final TextEditingController emailcontrollerlogin = TextEditingController();
+  final TextEditingController passwordControllerlogin = TextEditingController();
 
-
-Future<void> logIn() async{
-  
-}
+  Future<void> logIn() async {
+    final email = emailcontrollerlogin.text;
+    final password = passwordControllerlogin.text;
+    final response = await http.post(
+      Uri.parse(Apiservice.login),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "email": email,
+        "password": password,
+        "returnSecureToken": true,
+      }),
+    );
+    if (response.statusCode == 200) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    } else {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +46,6 @@ Future<void> logIn() async{
             padding: EdgeInsets.all(11.w),
 
             child: Form(
-             
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,7 +71,7 @@ Future<void> logIn() async{
                     ),
                   ),
                   SizedBox(height: 18.h),
-              
+
                   Text(
                     'E-mail',
                     style: TextStyle(
@@ -75,11 +85,10 @@ Future<void> logIn() async{
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     child: TextFormField(
                       validator: (value) {
-                        if(value==null||value.isEmpty)
-                        {
+                        if (value == null || value.isEmpty) {
                           return 'Please enter email';
                         }
-                        if(!value.contains('@gmail.com')){
+                        if (!value.contains('@gmail.com')) {
                           return 'Enter valid email';
                         }
                         return null;
@@ -103,9 +112,9 @@ Future<void> logIn() async{
                       ),
                     ),
                   ),
-              
+
                   SizedBox(height: 16.h),
-              
+
                   Text(
                     'Password',
                     style: TextStyle(
@@ -120,10 +129,9 @@ Future<void> logIn() async{
                     child: TextFormField(
                       controller: passwordControllerlogin,
                       validator: (value) {
-                        if(value==null||value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return 'Please enter password';
-                        }
-                        else{
+                        } else {
                           return null;
                         }
                       },
@@ -146,13 +154,17 @@ Future<void> logIn() async{
                     ),
                   ),
                   SizedBox(height: 20.h),
-              
+
                   Center(
                     child: SizedBox(
                       height: 45.h,
                       width: 0.65.sw,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          logIn();
+                          emailcontrollerlogin.clear();
+                          passwordControllerlogin.clear();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C0E6F),
                         ),
@@ -169,7 +181,7 @@ Future<void> logIn() async{
                     ),
                   ),
                   SizedBox(height: 20.h),
-              
+
                   Center(
                     child: SizedBox(
                       height: 45.h,
@@ -179,7 +191,10 @@ Future<void> logIn() async{
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/google.png', height: 16.h),
+                            Image.asset(
+                              'assets/images/google.png',
+                              height: 16.h,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               'Continue with Google',
@@ -195,7 +210,7 @@ Future<void> logIn() async{
                     ),
                   ),
                   SizedBox(height: 14.h),
-              
+
                   Center(
                     child: TextButton(
                       onPressed: () {},
@@ -209,18 +224,25 @@ Future<void> logIn() async{
                     ),
                   ),
                   SizedBox(height: 5.h),
-              
+
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.white, thickness: 1)),
+                      Expanded(
+                        child: Divider(color: Colors.white, thickness: 1),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.w),
                         child: Text(
                           'or',
-                          style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ),
-                      Expanded(child: Divider(color: Colors.white, thickness: 1)),
+                      Expanded(
+                        child: Divider(color: Colors.white, thickness: 1),
+                      ),
                     ],
                   ),
                   SizedBox(height: 5.h),
@@ -230,7 +252,7 @@ Future<void> logIn() async{
                       width: 0.85.sw,
                       child: ElevatedButton(
                         onPressed: () {
-                           Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C0E6F),
