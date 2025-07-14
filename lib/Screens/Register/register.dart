@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 ///validation snakbar
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,9 +18,15 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmpasswordcontroller =
+      TextEditingController();
 
+  bool passwordhide = true;
+  IconData iconhide = Icons.visibility_off;
+  bool confpasswordhide = true;
+  IconData conficonhide = Icons.visibility_off;
 
-final key=GlobalKey<FormState>();
+  final key = GlobalKey<FormState>();
 
   Future<void> signUp() async {
     final email = emailController.text; //post
@@ -78,12 +85,13 @@ final key=GlobalKey<FormState>();
                   padding: EdgeInsets.symmetric(horizontal: 2.w),
                   child: TextFormField(
                     validator: (value) {
-                      if(value==null||value.isEmpty)
-                    {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter email';
                       }
-                      if(!value.contains('@gmail.com')){
-                        return 'Enter valid email';
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Enter a valid email address';
                       }
                       return null;
                     },
@@ -120,21 +128,40 @@ final key=GlobalKey<FormState>();
                   padding: EdgeInsets.symmetric(horizontal: 2.w),
                   child: TextFormField(
                     validator: (value) {
-                      if(value==null||value.isEmpty)
-                    {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter Password';
                       }
-                      if(value.length<6){
+                      if (value.length < 6) {
                         return 'Password must be more than 6 characters';
+                      }
+                      if (!RegExp(
+                        r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$',
+                      ).hasMatch(value)) {
+                        return 'Password must contain letters and numbers only';
                       }
                       return null;
                     },
                     controller: passwordController,
+                    obscureText: passwordhide,
                     style: TextStyle(fontSize: 14.sp),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.password, size: 22.sp),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (passwordhide == true) {
+                              passwordhide = false;
+                              iconhide = Icons.visibility;
+                            } else {
+                              passwordhide = true;
+                              iconhide = Icons.visibility_off;
+                            }
+                          });
+                        },
+                        icon: Icon(iconhide, size: 22.sp),
+                      ),
                       hintText: 'Enter Password',
                       hintStyle: TextStyle(fontSize: 14.sp),
                       contentPadding: EdgeInsets.symmetric(
@@ -161,12 +188,44 @@ final key=GlobalKey<FormState>();
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 2.w),
                   child: TextFormField(
-                    // controller: passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be more than 6 characters';
+                      }
+                      if (!RegExp(
+                        r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$',
+                      ).hasMatch(value)) {
+                        return 'Password must contain letters and numbers only';
+                      }
+                      if (value != passwordController.text) {
+                        return 'Password dont match';
+                      }
+                      return null;
+                    },
+                    controller: confirmpasswordcontroller,
+                    obscureText: confpasswordhide,
                     style: TextStyle(fontSize: 14.sp),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.password, size: 22.sp),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (confpasswordhide == true) {
+                              confpasswordhide = false;
+                              conficonhide = Icons.visibility;
+                            } else {
+                              confpasswordhide = true;
+                              conficonhide = Icons.visibility_off;
+                            }
+                          });
+                        },
+                        icon: Icon(conficonhide, size: 22.sp),
+                      ),
                       hintText: 'Confirm Password',
                       hintStyle: TextStyle(fontSize: 14.sp),
                       contentPadding: EdgeInsets.symmetric(
@@ -187,12 +246,15 @@ final key=GlobalKey<FormState>();
                     width: 0.65.sw,
                     child: ElevatedButton(
                       onPressed: () {
-                      if(key.currentState!.validate()){
-                        signUp();
-                        emailController.clear();
-                        passwordController.clear();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(),));
-                      }
+                        if (key.currentState!.validate()) {
+                          signUp();
+                          emailController.clear();
+                          passwordController.clear();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home()),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF1C0E6F),
@@ -209,7 +271,7 @@ final key=GlobalKey<FormState>();
                     ),
                   ),
                 ),
-            
+
                 SizedBox(height: 20.h),
                 Center(
                   child: SizedBox(
@@ -235,7 +297,7 @@ final key=GlobalKey<FormState>();
                     ),
                   ),
                 ),
-            
+
                 SizedBox(height: 14.h),
                 Center(
                   child: Row(
@@ -256,7 +318,7 @@ final key=GlobalKey<FormState>();
                     ],
                   ),
                 ),
-            
+
                 Row(
                   children: [
                     Expanded(child: Divider(color: Colors.white, thickness: 1)),
@@ -271,7 +333,7 @@ final key=GlobalKey<FormState>();
                   ],
                 ),
                 SizedBox(height: 5.h),
-            
+
                 Center(
                   child: SizedBox(
                     height: 45.h,
@@ -282,7 +344,6 @@ final key=GlobalKey<FormState>();
                           context,
                           MaterialPageRoute(builder: (_) => const Loginpage()),
                         );
-                       
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1C0E6F),

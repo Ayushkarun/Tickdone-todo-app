@@ -1,0 +1,56 @@
+Future<void> signUp() async {
+  final email = emailController.text;
+  final password = passwordController.text;
+
+  try {
+    final response = await http.post(
+      Uri.parse(Apiservice.register),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "email": email,
+        "password": password,
+        "returnSecureToken": true,
+      }),
+    );
+
+    final result = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      // Success
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+      emailController.clear();
+      passwordController.clear();
+    } else {
+      // Error occurred
+      final errorMessage = result["error"]["message"];
+      String displayMessage = "Registration failed. Please try again.";
+
+      if (errorMessage == "EMAIL_EXISTS") {
+        displayMessage = "Email already exists. Try logging in.";
+      } else if (errorMessage == "WEAK_PASSWORD : Password should be at least 6 characters") {
+        displayMessage = "Password too weak. Use at least 6 characters.";
+      } else if (errorMessage == "INVALID_EMAIL") {
+        displayMessage = "Please enter a valid email address.";
+      }
+
+      // Show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(displayMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    // Network error or unexpected error
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Something went wrong. Check internet connection."),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}

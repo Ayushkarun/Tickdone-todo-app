@@ -15,6 +15,10 @@ class Loginpage extends StatefulWidget {
 class _LoginpageState extends State<Loginpage> {
   final TextEditingController emailcontrollerlogin = TextEditingController();
   final TextEditingController passwordControllerlogin = TextEditingController();
+  bool passwordhide = true;
+  IconData iconhide = Icons.visibility_off;
+
+  final loginkey = GlobalKey<FormState>();
 
   Future<void> logIn() async {
     final email = emailcontrollerlogin.text;
@@ -28,9 +32,29 @@ class _LoginpageState extends State<Loginpage> {
         "returnSecureToken": true,
       }),
     );
+    final result = json.decode(response.body);
+
     if (response.statusCode == 200) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-    } else {}
+    } else {
+      // Firebase returns error in this format:Extract the Firebase error message
+      // {"error":{"message":"INVALID_PASSWORD"}}
+      final errorMessage = result["error"]["message"];
+
+      //  default message
+      String displayMessage = "Login failed. Please try again.";
+
+      if (errorMessage == "EMAIL_NOT_FOUND") {
+        displayMessage = "No user found with this email.";
+      } else if (errorMessage == "INVALID_PASSWORD") {
+        displayMessage = "Incorrect password.";
+      } else if (errorMessage == "USER_DISABLED") {
+        displayMessage = "This user account has been disabled.";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(displayMessage), backgroundColor: Colors.red),
+      );
+    }
   }
 
   @override
@@ -46,6 +70,7 @@ class _LoginpageState extends State<Loginpage> {
             padding: EdgeInsets.all(11.w),
 
             child: Form(
+              key: loginkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -88,8 +113,10 @@ class _LoginpageState extends State<Loginpage> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter email';
                         }
-                        if (!value.contains('@gmail.com')) {
-                          return 'Enter valid email';
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(value)) {
+                          return 'Enter a valid email address';
                         }
                         return null;
                       },
@@ -127,13 +154,21 @@ class _LoginpageState extends State<Loginpage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     child: TextFormField(
+                      obscureText: passwordhide,
                       controller: passwordControllerlogin,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter password';
-                        } else {
-                          return null;
+                          return 'Please enter Password';
                         }
+                        if (value.length < 6) {
+                          return 'Password must be more than 6 characters';
+                        }
+                        if (!RegExp(
+                          r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$',
+                        ).hasMatch(value)) {
+                          return 'Password must contain letters and numbers only';
+                        }
+                        return null;
                       },
                       style: TextStyle(fontSize: 14.sp),
                       decoration: InputDecoration(
@@ -142,6 +177,21 @@ class _LoginpageState extends State<Loginpage> {
                         prefixIcon: Icon(Icons.password, size: 22.sp),
                         hintText: 'Enter Password',
                         hintStyle: TextStyle(fontSize: 14.sp),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (passwordhide == true) {
+                                passwordhide = false;
+                                iconhide = Icons.visibility;
+                              } else {
+                                passwordhide = true;
+                                iconhide = Icons.visibility_off;
+                              }
+                            });
+                          },
+                          icon: Icon(iconhide),
+                        ),
+
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12.h,
                           horizontal: 10.w,
@@ -161,7 +211,10 @@ class _LoginpageState extends State<Loginpage> {
                       width: 0.65.sw,
                       child: ElevatedButton(
                         onPressed: () {
-                          logIn();
+                          if (loginkey.currentState!.validate()) {
+                            logIn();
+                          }
+
                           emailcontrollerlogin.clear();
                           passwordControllerlogin.clear();
                         },
