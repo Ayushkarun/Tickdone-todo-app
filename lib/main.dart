@@ -7,7 +7,7 @@ void main() async
 {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await Future.delayed(Duration(seconds: 3),);
+  await Future.delayed(Duration(seconds: 2),);
   FlutterNativeSplash.remove();
   runApp(const Tickdone());
 }

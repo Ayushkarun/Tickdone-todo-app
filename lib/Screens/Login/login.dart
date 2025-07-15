@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -23,36 +24,96 @@ class _LoginpageState extends State<Loginpage> {
   Future<void> logIn() async {
     final email = emailcontrollerlogin.text;
     final password = passwordControllerlogin.text;
-    final response = await http.post(
-      Uri.parse(Apiservice.login),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({
-        "email": email,
-        "password": password,
-        "returnSecureToken": true,
-      }),
-    );
-    final result = json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-    } else {
-      // Firebase returns error in this format:Extract the Firebase error message
-      // {"error":{"message":"INVALID_PASSWORD"}}
-      final errorMessage = result["error"]["message"];
+    try {
+      final response = await http.post(
+        Uri.parse(Apiservice.login),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "email": email,
+          "password": password,
+          "returnSecureToken": true,
+        }),
+      );
 
-      //  default message
-      String displayMessage = "Login failed. Please try again.";
+      final result = json.decode(response.body);
 
-      if (errorMessage == "EMAIL_NOT_FOUND") {
-        displayMessage = "No user found with this email.";
-      } else if (errorMessage == "INVALID_PASSWORD") {
-        displayMessage = "Incorrect password.";
-      } else if (errorMessage == "USER_DISABLED") {
-        displayMessage = "This user account has been disabled.";
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+        emailcontrollerlogin.clear();
+        passwordControllerlogin.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Login Successful!',
+              message: 'Welcome back!',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        String displayMessage = "Login failed. Please try again.";
+
+        if (result.containsKey("error") &&
+            result["error"].containsKey("message")) {
+          final errorMessage = result["error"]["message"];
+
+          if (errorMessage == "EMAIL_NOT_FOUND") {
+            displayMessage = "No user found with this email.";
+          } else if (errorMessage == "INVALID_PASSWORD") {
+            displayMessage = "Incorrect password.";
+          } else if (errorMessage == "INVALID_LOGIN_CREDENTIALS") {
+            displayMessage = "Email or password is incorrect.";
+          } else if (errorMessage == "USER_DISABLED") {
+            displayMessage = "This user account has been disabled.";
+          } else {
+            displayMessage =
+                errorMessage; // fallback: show Firebase raw message
+          }
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Login Failed!',
+              message: displayMessage,
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
       }
+    } catch (e) {
+      // If there's any unexpected issue (like network failure)
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(displayMessage), backgroundColor: Colors.red),
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Error!',
+            message: 'Something went wrong. Please try again.',
+            contentType: ContentType.failure,
+          ),
+        ),
       );
     }
   }
@@ -214,9 +275,6 @@ class _LoginpageState extends State<Loginpage> {
                           if (loginkey.currentState!.validate()) {
                             logIn();
                           }
-
-                          emailcontrollerlogin.clear();
-                          passwordControllerlogin.clear();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C0E6F),

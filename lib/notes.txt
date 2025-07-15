@@ -3,10 +3,48 @@ to build apk
 
 AIzaSyAabkwoAsDrqHHjd83GebVChCo4Maqp6aU
 
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+
+flutter_spinkit 5.2.1
+awesome_snackbar_content 0.1.6
+animations: ^2.0.11
 
 test
 tickdone@gmail.com
 tick123
+
+Navigator.pushReplacement(
+  context,
+  PageRouteBuilder(
+    transitionDuration: const Duration(milliseconds: 600), // smooth speed
+    pageBuilder: (context, animation, secondaryAnimation) => const Register(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Slide from bottom
+      final offsetAnimation = Tween<Offset>(
+        begin: const Offset(0.0, 0.3), // Y-axis slide
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOut, // smooth feel
+      ));
+
+      // Fade in
+      final fadeAnimation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeIn,
+      );
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: FadeTransition(
+          opacity: fadeAnimation,
+          child: child,
+        ),
+      );
+    },
+  ),
+);
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -51,10 +51,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Tick tasks as you go and stay focused.Get things done right on time.',
         buttonText: "Get Started",
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) =>const Register()),
-          );
+Navigator.pushReplacement(
+  context,
+  PageRouteBuilder(
+    transitionDuration: const Duration(milliseconds: 600), // smooth speed
+    pageBuilder: (context, animation, secondaryAnimation) => const Register(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Slide from bottom
+      final offsetAnimation = Tween<Offset>(
+        begin: const Offset(0.0, 0.3), // Y-axis slide
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOut, // smooth feel
+      ));
+
+      // Fade in
+      final fadeAnimation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeIn,
+      );
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: FadeTransition(
+          opacity: fadeAnimation,
+          child: child,
+        ),
+      );
+    },
+  ),
+);
+
         },
       ),
     ];
