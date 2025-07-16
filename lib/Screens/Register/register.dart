@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Login/login.dart';
 import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -29,20 +30,97 @@ class _RegisterState extends State<Register> {
   final key = GlobalKey<FormState>();
 
   Future<void> signUp() async {
-    final email = emailController.text; //post
+    final email = emailController.text;
     final password = passwordController.text;
-    final response = await http.post(
-      Uri.parse(Apiservice.register),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({
-        "email": email,
-        "password": password,
-        "returnSecureToken": true,
-      }),
-    );
-    // print(response.statusCode);
-    // final result = json.decode(response.body);
-    // print(result);
+
+    try {
+      final response = await http.post(
+        Uri.parse(Apiservice.register),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "email": email,
+          "password": password,
+          "returnSecureToken": true,
+        }),
+      );
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        // Success
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+        emailController.clear();
+        passwordController.clear();
+        confirmpasswordcontroller.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Register Successful!',
+              message: 'Welcome !',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        // Error occurred
+        final errorMessage = result["error"]["message"];
+        String displayMessage = "Registration failed. Please try again.";
+
+        if (errorMessage == "EMAIL_EXISTS") {
+          displayMessage = "Email already exists. Try logging in.";
+        } else if (errorMessage == "WEAK_PASSWORD") {
+          displayMessage = "Password too weak. Use at least 6 characters.";
+        } else if (errorMessage == "INVALID_EMAIL") {
+          displayMessage = "Please enter a valid email address.";
+        } else if (errorMessage == "TOO_MANY_ATTEMPTS_TRY_LATER") {
+          displayMessage = "Too many attempts. Try again later.";
+        }
+
+        // Show snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Register Failed!',
+              message: displayMessage,
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Network error or unexpected error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Error!',
+            message: 'Something went wrong. Please try again.',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -248,27 +326,6 @@ class _RegisterState extends State<Register> {
                       onPressed: () {
                         if (key.currentState!.validate()) {
                           signUp();
-                          emailController.clear();
-                          passwordController.clear();
-                          Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      Home(),
-                              transitionsBuilder: (
-                                context,
-                                animation,
-                                secondaryAnimation,
-                                child,
-                              ) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
