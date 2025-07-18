@@ -59,7 +59,7 @@ class OnboardingCard extends StatelessWidget {
           ),
 
           SizedBox(height: 0.08.sh),
-
+          
           Padding(
             padding: EdgeInsets.only(bottom: 0.03.sh),
             child: MaterialButton(

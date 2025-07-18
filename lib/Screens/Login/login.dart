@@ -14,6 +14,8 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
+  final FocusNode emailfocus = FocusNode();
+  final FocusNode passwordfocus = FocusNode();
   final TextEditingController emailcontrollerlogin = TextEditingController();
   final TextEditingController passwordControllerlogin = TextEditingController();
   bool passwordhide = true;
@@ -21,6 +23,158 @@ class _LoginpageState extends State<Loginpage> {
 
   final loginkey = GlobalKey<FormState>();
 
+  // FORGOT PASSWORD
+  Future<void> forgotPassword(String email) async {
+    final body = json.encode({'requestType': 'PASSWORD_RESET', 'email': email});
+    try {
+      final response = await http.post(
+        Uri.parse(Apiservice.forgotPassword),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success!',
+              message: 'Password reset link sent to your email.',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        final result = json.decode(response.body);
+        String displayMessage = "An error occurred. Please try again.";
+        if (result.containsKey("error") &&
+            result["error"].containsKey("message")) {
+          final errorMessage = result["error"]["message"];
+          if (errorMessage == "EMAIL_NOT_FOUND") {
+            displayMessage = "No user found with this email.";
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Oh Snap!',
+              message: displayMessage,
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle network or other unexpected errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Error!',
+            message: 'Something went wrong. Please check your connection.',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
+    }
+  }
+  // DIALOG TO GET EMAIL FOR FORGOT PASSWORD
+  void showForgotPasswordDialog() {
+    final TextEditingController emailController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          title: Text(
+            "Forgot Password",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 20.sp,
+            ),
+          ),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: emailController,
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+              decoration: InputDecoration(
+                labelText: "Enter your email",
+                labelStyle: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: const Color(0xFF1C0E6F)),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
+                  return 'Enter a valid email address';
+                }
+                return null;
+              },
+            ),
+          ),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1C0E6F),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              ),
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  forgotPassword(emailController.text.trim());
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text(
+                "Send Link",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //login
   Future<void> logIn() async {
     final email = emailcontrollerlogin.text;
     final password = passwordControllerlogin.text;
@@ -39,6 +193,8 @@ class _LoginpageState extends State<Loginpage> {
       final result = json.decode(response.body);
 
       if (response.statusCode == 200) {
+        emailcontrollerlogin.clear();
+        passwordControllerlogin.clear();
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -53,8 +209,7 @@ class _LoginpageState extends State<Loginpage> {
             },
           ),
         );
-        emailcontrollerlogin.clear();
-        passwordControllerlogin.clear();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             elevation: 0,
@@ -119,6 +274,15 @@ class _LoginpageState extends State<Loginpage> {
   }
 
   @override
+  void dispose() {
+    emailfocus.dispose();
+    passwordfocus.dispose();
+    emailcontrollerlogin.dispose();
+    passwordControllerlogin.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -170,6 +334,9 @@ class _LoginpageState extends State<Loginpage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     child: TextFormField(
+                      autofocus: false,
+                      focusNode: emailfocus,
+
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter email';
@@ -198,6 +365,10 @@ class _LoginpageState extends State<Loginpage> {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                       ),
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (value) {
+                        FocusScope.of(context).requestFocus(passwordfocus);
+                      },
                     ),
                   ),
 
@@ -215,6 +386,8 @@ class _LoginpageState extends State<Loginpage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 2.w),
                     child: TextFormField(
+                      focusNode: passwordfocus,
+                      autofocus: false,
                       obscureText: passwordhide,
                       controller: passwordControllerlogin,
                       validator: (value) {
@@ -262,6 +435,12 @@ class _LoginpageState extends State<Loginpage> {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                       ),
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (value) {
+                        if (loginkey.currentState!.validate()) {
+                          logIn();
+                        }
+                      },
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -324,7 +503,9 @@ class _LoginpageState extends State<Loginpage> {
 
                   Center(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showForgotPasswordDialog();
+                      },
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(
@@ -363,6 +544,8 @@ class _LoginpageState extends State<Loginpage> {
                       width: 0.85.sw,
                       child: ElevatedButton(
                         onPressed: () {
+                          emailcontrollerlogin.clear();
+                          passwordControllerlogin.clear();
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(

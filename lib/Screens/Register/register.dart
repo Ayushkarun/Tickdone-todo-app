@@ -48,6 +48,9 @@ class _RegisterState extends State<Register> {
 
       if (response.statusCode == 200) {
         // Success
+        emailController.clear();
+        passwordController.clear();
+        confirmpasswordcontroller.clear();
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -62,9 +65,7 @@ class _RegisterState extends State<Register> {
             },
           ),
         );
-        emailController.clear();
-        passwordController.clear();
-        confirmpasswordcontroller.clear();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             elevation: 0,
@@ -121,6 +122,14 @@ class _RegisterState extends State<Register> {
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmpasswordcontroller.dispose();
+    super.dispose();
   }
 
   @override
@@ -412,6 +421,9 @@ class _RegisterState extends State<Register> {
                     width: 0.85.sw,
                     child: ElevatedButton(
                       onPressed: () {
+                        emailController.clear();
+                        passwordController.clear();
+                        confirmpasswordcontroller.clear();
                         Navigator.push(
                           context,
                           PageRouteBuilder(
