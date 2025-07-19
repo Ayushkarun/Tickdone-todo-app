@@ -25,12 +25,11 @@ class _LoginpageState extends State<Loginpage> {
 
   // FORGOT PASSWORD
   Future<void> forgotPassword(String email) async {
-    final body = json.encode({'requestType': 'PASSWORD_RESET', 'email': email});
     try {
       final response = await http.post(
         Uri.parse(Apiservice.forgotPassword),
         headers: {"Content-Type": "application/json"},
-        body: body,
+        body: json.encode({'requestType': 'PASSWORD_RESET', 'email': email}),
       );
 
       if (response.statusCode == 200) {
@@ -85,9 +84,10 @@ class _LoginpageState extends State<Loginpage> {
       );
     }
   }
+
   // DIALOG TO GET EMAIL FOR FORGOT PASSWORD
   void showForgotPasswordDialog() {
-    final TextEditingController emailController = TextEditingController();
+    final TextEditingController emailControllerforgot = TextEditingController();
     final formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
@@ -106,7 +106,7 @@ class _LoginpageState extends State<Loginpage> {
           content: Form(
             key: formKey,
             child: TextFormField(
-              controller: emailController,
+              controller: emailControllerforgot,
               style: TextStyle(color: Colors.white, fontSize: 16.sp),
               decoration: InputDecoration(
                 labelText: "Enter your email",
@@ -145,6 +145,7 @@ class _LoginpageState extends State<Loginpage> {
                   fontFamily: 'Poppins',
                   color: Colors.white,
                   fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -155,7 +156,7 @@ class _LoginpageState extends State<Loginpage> {
               ),
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  forgotPassword(emailController.text.trim());
+                  forgotPassword(emailControllerforgot.text.trim());
                   Navigator.of(context).pop();
                 }
               },
@@ -165,6 +166,7 @@ class _LoginpageState extends State<Loginpage> {
                   fontFamily: 'Poppins',
                   color: Colors.white,
                   fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

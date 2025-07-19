@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "723607378116",
+    "project_id": "tickdonetodo",
+    "storage_bucket": "tickdonetodo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723607378116:android:66c71ce1616dbb96b89191",
+        "android_client_info": {
+          "package_name": "com.example.tickdone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOP_uflTB-yToqRFLwtBzUW3o-h0nLbfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
