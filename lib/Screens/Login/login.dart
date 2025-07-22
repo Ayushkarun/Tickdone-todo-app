@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -275,6 +276,88 @@ class _LoginpageState extends State<Loginpage> {
     }
   }
 
+  //sign in with google
+  Future<void> signInwithGoogle() async {
+    try {
+      // Force show account chooser every time
+      await GoogleSignIn().signOut();
+      // 1. Show the Google "Choose an account" pop-up
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // If the user closes the pop-up, we stop here.
+      if (googleUser == null) {
+        return;
+      }
+
+      // 2. Get the special "ticket" (ID Token) from the chosen account.
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw Exception('Could not get Google ID Token.');
+      }
+
+      // 3. Send the ticket to our Firebase API.
+      final response = await http.post(
+        Uri.parse(Apiservice.googleSignIn),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "postBody": "id_token=$idToken&providerId=google.com",
+          "requestUri": "http://localhost",
+          "returnSecureToken": true,
+          "returnIdpCredential": true,
+        }),
+      );
+
+      // 4. Check if Firebase says "OK" (status code 200).
+      if (response.statusCode == 200) {
+        // If successful, the main.dart listener will automatically navigate to Home.
+        // We don't need a Navigator.push here anymore.
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Register Successful!',
+              message: 'Welcome !',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        // If Firebase gives an error, show it.
+        final data = json.decode(response.body);
+        final message =
+            data['error']['message'] ?? 'An unknown error occurred.';
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $message")));
+      }
+    } catch (e) {
+      // If anything else goes wrong, show a general error.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: ${e.toString()}")),
+      );
+    }
+  }
+
   @override
   void dispose() {
     emailfocus.dispose();
@@ -479,7 +562,9 @@ class _LoginpageState extends State<Loginpage> {
                       height: 45.h,
                       width: 0.53.sw,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          signInwithGoogle();
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

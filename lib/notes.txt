@@ -1,9 +1,50 @@
 flutter build apk 
 to build apk
 
+ minSdk = 23
+
 AIzaSyAabkwoAsDrqHHjd83GebVChCo4Maqp6aU
 
  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+
+ import 'package:flutter/material.dart';
+import 'package:tickdone/Screens/splash%20screen/splash_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:firebase_core/firebase_core.dart';
+
+
+void main() async
+{
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    // These two lines are essential
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await Future.delayed(Duration(seconds: 2),);
+  FlutterNativeSplash.remove();
+  // await Firebase.initializeApp();
+  runApp(const Tickdone());
+}
+
+class Tickdone extends StatelessWidget {
+  const Tickdone({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: ScreenUtil.defaultSize,
+      builder: (context, child) => 
+      MaterialApp(
+        title: 'Tickdone',
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      ),
+    );
+  }
+}
 
 flutter_spinkit 5.2.1
 awesome_snackbar_content 0.1.6

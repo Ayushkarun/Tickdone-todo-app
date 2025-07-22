@@ -41,10 +41,9 @@ dependencies:
   http: ^1.4.0
   # dio: ^5.8.0+1
   awesome_snackbar_content: ^0.1.6
-  firebase_core: ^3.15.1
-  # firebase_core: ^3.15.1
-  # firebase_auth: ^5.6.2
-  # google_sign_in: ^7.1.1
+  firebase_core: ^3.1.1 # Use specific, compatible versions
+  firebase_auth: ^5.1.1
+  google_sign_in: ^6.2.1
 
 
 dev_dependencies:
