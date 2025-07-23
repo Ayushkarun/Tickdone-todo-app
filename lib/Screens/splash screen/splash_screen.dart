@@ -17,10 +17,23 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+        PageRouteBuilder(
+          pageBuilder:
+              (context, animation, secondaryAnimation) =>
+                  const OnboardingScreen(),
+          transitionDuration: const Duration(
+            milliseconds: 500,
+          ), // Adjust duration as you like
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            // Use a FadeTransition for a smooth fade-in effect
+            return ScaleTransition(scale: animation, child: child);
+          },
+        ),
       );
     });
   }
+
+  // NEW CODE for initState() in splash_screen.dart
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +72,11 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(height: 5.h),
               Text(
                 'TICK A TASK, GET IT DONE.',
-                style:TextStyle(
+                style: TextStyle(
                   fontFamily: 'Poppins',
-                  color: Colors.white70, fontSize: 10.sp
-                )
-
+                  color: Colors.white70,
+                  fontSize: 10.sp,
+                ),
               ),
               const Spacer(),
               Padding(
@@ -81,10 +94,11 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                     Text(
                       'ALL RIGHTS RESERVED',
-                      style: TextStyle
-                      (fontSize: 8.sp, 
-                      fontFamily: 'Poppins',
-                      color: Colors.white60),
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        fontFamily: 'Poppins',
+                        color: Colors.white60,
+                      ),
                     ),
                   ],
                 ),

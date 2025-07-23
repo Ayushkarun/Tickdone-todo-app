@@ -4,6 +4,7 @@ import 'package:tickdone/Screens/onboardingScreens/onboarding_data.dart';
 import 'package:tickdone/Screens/Register/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -26,7 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           _pageController.animateToPage(
             1,
             duration: Durations.long1,
-            curve: Curves.linear,
+            curve: Curves.easeInOut,
           );
         },
       ),
@@ -40,7 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           _pageController.animateToPage(
             2,
             duration: Durations.long1,
-            curve: Curves.linear,
+            curve: Curves.easeInOut,
           );
         },
       ),

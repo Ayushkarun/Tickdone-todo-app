@@ -14,7 +14,7 @@ void main() async
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Initialize Firebase
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await Future.delayed(Duration(seconds: 2),);
+  await Future.delayed(Duration(seconds: 1),);
   FlutterNativeSplash.remove();
   // await Firebase.initializeApp();
   runApp(const Tickdone());
