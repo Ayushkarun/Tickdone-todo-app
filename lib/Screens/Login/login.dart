@@ -7,6 +7,7 @@ import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -201,6 +202,9 @@ class _LoginpageState extends State<Loginpage> {
       final result = json.decode(response.body);
 
       if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('idToken', result['idToken']);
+        await prefs.setString('refreshToken', result['refreshToken']);
         emailcontrollerlogin.clear();
         passwordControllerlogin.clear();
         Navigator.pushReplacement(
@@ -327,11 +331,14 @@ class _LoginpageState extends State<Loginpage> {
           "returnIdpCredential": true,
         }),
       );
-      
+      final result = json.decode(response.body);
       if (response.statusCode == 200) {
         setState(() {
           isLoading = false;
         });
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('idToken', result['idToken']);
+        await prefs.setString('refreshToken', result['refreshToken']);
         // If successful, the main.dart listener will automatically navigate to Home.
         // We don't need a Navigator.push here anymore.
         Navigator.pushReplacement(

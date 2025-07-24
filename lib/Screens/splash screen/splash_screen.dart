@@ -1,7 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Screens/onboardingScreens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Screens/Home/home.dart';
+import 'package:tickdone/Service/api_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:tickdone/Screens/Login/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,7 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    checkSessionAndNavigate();
+  }
+  Future<void> checkSessionAndNavigate() async{
+    final prefs=await SharedPreferences.getInstance();
+    final refreshToken=prefs.getString('refreshToken');
+    await Future.delayed(const Duration(seconds: 2));
+    if(refreshToken==null){
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -23,15 +35,85 @@ class _SplashScreenState extends State<SplashScreen> {
                   const OnboardingScreen(),
           transitionDuration: const Duration(
             milliseconds: 500,
-          ), // Adjust duration as you like
+          ), 
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            // Use a FadeTransition for a smooth fade-in effect
+           
             return ScaleTransition(scale: animation, child: child);
           },
         ),
       );
-    });
+      return;
+    }
+    try{
+      final response=await http.post(
+        Uri.parse(Apiservice.refreshToken),
+        headers: {"Content-Type":"application/json"},
+        body: json.encode({
+          'grant_type': 'refresh_token',
+
+          'refresh_token': refreshToken,
+        }),
+        
+      );
+      if(response.statusCode==200){
+        final result=json.decode(response.body);
+        await prefs.setString('idToken', result['id_token']);
+        Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder:
+              (context, animation, secondaryAnimation) =>
+                  const Home(),
+          transitionDuration: const Duration(
+            milliseconds: 500,
+          ), 
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           
+            return ScaleTransition(scale: animation, child: child);
+          },
+        ),
+      );
+
+      }
+      else{
+        prefs.clear();
+              Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder:
+              (context, animation, secondaryAnimation) =>
+                  const Loginpage(),
+          transitionDuration: const Duration(
+            milliseconds: 500,
+          ), 
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           
+            return ScaleTransition(scale: animation, child: child);
+          },
+        ),
+      );
+      }
+    }
+    catch(e){
+      prefs.clear();
+                    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder:
+              (context, animation, secondaryAnimation) =>
+                  const Loginpage(),
+          transitionDuration: const Duration(
+            milliseconds: 500,
+          ), 
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           
+            return ScaleTransition(scale: animation, child: child);
+          },
+        ),
+      );
+    }
   }
+
 
   // NEW CODE for initState() in splash_screen.dart
 
