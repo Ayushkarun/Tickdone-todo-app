@@ -4,7 +4,6 @@ import 'package:tickdone/Screens/onboardingScreens/onboarding_data.dart';
 import 'package:tickdone/Screens/Register/register.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -52,38 +51,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             'Tick tasks as you go and stay focused.Get things done right on time.',
         buttonText: "Get Started",
         onPressed: () {
-Navigator.pushReplacement(
-  context,
-  PageRouteBuilder(
-    transitionDuration: const Duration(milliseconds: 600), // smooth speed
-    pageBuilder: (context, animation, secondaryAnimation) => const Register(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      // Slide from bottom
-      final offsetAnimation = Tween<Offset>(
-        begin: const Offset(0.0, 0.3), // Y-axis slide
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOut, // smooth feel
-      ));
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(
+                milliseconds: 600,
+              ), // smooth speed
+              pageBuilder:
+                  (context, animation, secondaryAnimation) => const Register(),
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
+                final offsetAnimation = Tween<Offset>(
+                  begin: const Offset(0.0, 0.3),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOut, // smooth feel
+                  ),
+                );
 
-      // Fade in
-      final fadeAnimation = CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeIn,
-      );
+                final fadeAnimation = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeIn,
+                );
 
-      return SlideTransition(
-        position: offsetAnimation,
-        child: FadeTransition(
-          opacity: fadeAnimation,
-          child: child,
-        ),
-      );
-    },
-  ),
-);
-
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: FadeTransition(opacity: fadeAnimation, child: child),
+                );
+              },
+            ),
+          );
         },
       ),
     ];
@@ -91,12 +94,10 @@ Navigator.pushReplacement(
 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
-    // final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.05.sh), // 5% of screen height
+        padding: EdgeInsets.symmetric(vertical: 0.05.sh),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -120,7 +121,12 @@ Navigator.pushReplacement(
               },
               effect: ExpandingDotsEffect(
                 activeDotColor: Colors.white, // dot for the current page
-                dotColor:const Color.fromARGB(255, 255, 255, 255), // dots for the other pages
+                dotColor: const Color.fromARGB(
+                  255,
+                  255,
+                  255,
+                  255,
+                ), // dots for the other pages
                 dotHeight: 8.w,
                 dotWidth: 8.w,
                 expansionFactor: 3,

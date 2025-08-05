@@ -8,6 +8,8 @@ import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Login/login.dart';
+import 'package:tickdone/Screens/Home/bottomnav.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,91 +24,83 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     checkSessionAndNavigate();
   }
-  Future<void> checkSessionAndNavigate() async{
-    final prefs=await SharedPreferences.getInstance();
-    final refreshToken=prefs.getString('refreshToken');
+
+  Future<void> checkSessionAndNavigate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final refreshToken = prefs.getString('refreshToken');
     await Future.delayed(const Duration(seconds: 2));
-    if(refreshToken==null){
+    if (refreshToken == null) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
           pageBuilder:
               (context, animation, secondaryAnimation) =>
                   const OnboardingScreen(),
-          transitionDuration: const Duration(
-            milliseconds: 500,
-          ), 
+          transitionDuration: const Duration(milliseconds: 500),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           
             return ScaleTransition(scale: animation, child: child);
           },
         ),
       );
       return;
     }
-    try{
-      final response=await http.post(
+    try {
+      final response = await http.post(
         Uri.parse(Apiservice.refreshToken),
-        headers: {"Content-Type":"application/json"},
+        headers: {"Content-Type": "application/json"},
         body: json.encode({
           'grant_type': 'refresh_token',
 
           'refresh_token': refreshToken,
         }),
-        
       );
-      if(response.statusCode==200){
-        final result=json.decode(response.body);
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
         await prefs.setString('idToken', result['id_token']);
         Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder:
-              (context, animation, secondaryAnimation) =>
-                  const Home(),
-          transitionDuration: const Duration(
-            milliseconds: 500,
-          ), 
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           
-            return ScaleTransition(scale: animation, child: child);
-          },
-        ),
-      );
-
-      }
-      else{
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const Bottomnav(),
+            transitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+          ),
+        );
+      } else {
         prefs.clear();
-              Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder:
-              (context, animation, secondaryAnimation) =>
-                  const Loginpage(),
-          transitionDuration: const Duration(
-            milliseconds: 500,
-          ), 
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           
-            return ScaleTransition(scale: animation, child: child);
-          },
-        ),
-      );
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const Loginpage(),
+            transitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+          ),
+        );
       }
-    }
-    catch(e){
+    } catch (e) {
       prefs.clear();
-                    Navigator.pushReplacement(
+      Navigator.pushReplacement(
         context,
         PageRouteBuilder(
           pageBuilder:
-              (context, animation, secondaryAnimation) =>
-                  const Loginpage(),
-          transitionDuration: const Duration(
-            milliseconds: 500,
-          ), 
+              (context, animation, secondaryAnimation) => const Loginpage(),
+          transitionDuration: const Duration(milliseconds: 500),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-           
             return ScaleTransition(scale: animation, child: child);
           },
         ),
@@ -115,78 +109,74 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
 
-  // NEW CODE for initState() in splash_screen.dart
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          width: 1.sw,
-          height: 1.sh,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [0.45, 0.55],
-              colors: [Colors.black, Color(0xFF10083F)],
+      body: Container(
+        width: 1.sw,
+        height: 1.sh,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.45, 0.55],
+            colors: [Colors.black, Color(0xFF10083F)],
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50.h),
+            Image.asset(
+              "assets/images/Logo/logofinal.png",
+              width: 0.20.sw,
+              height: 0.15.sh,
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 18.h),
-              Image.asset(
-                "assets/images/Logo/logofinal.png",
-                width: 0.20.sw,
-                height: 0.15.sh,
+            Text(
+              'TICKDONE',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 27.sp,
+                letterSpacing: 1.w,
               ),
-              Text(
-                'TICKDONE',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 27.sp,
-                  letterSpacing: 1.w,
-                ),
+            ),
+            SizedBox(height: 5.h),
+            Text(
+              'TICK A TASK, GET IT DONE.',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.white70,
+                fontSize: 10.sp,
               ),
-              SizedBox(height: 5.h),
-              Text(
-                'TICK A TASK, GET IT DONE.',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  color: Colors.white70,
-                  fontSize: 10.sp,
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: EdgeInsets.only(bottom: 23.h),
-                child: Column(
-                  children: [
-                    Text(
-                      'Version 1.0.0',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 10.sp,
-                        color: Colors.white60,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 23.h),
+              child: Column(
+                children: [
+                  Text(
+                    'Version 1.0.0',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 10.sp,
+                      color: Colors.white60,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Text(
-                      'ALL RIGHTS RESERVED',
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        fontFamily: 'Poppins',
-                        color: Colors.white60,
-                      ),
+                  ),
+                  Text(
+                    'ALL RIGHTS RESERVED',
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      fontFamily: 'Poppins',
+                      color: Colors.white60,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

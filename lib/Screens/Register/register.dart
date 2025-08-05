@@ -10,6 +10,8 @@ import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Screens/Home/bottomnav.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -53,6 +55,9 @@ class _RegisterState extends State<Register> {
       final result = json.decode(response.body);
 
       if (response.statusCode == 200) {
+        final prefs=await SharedPreferences.getInstance();
+        await prefs.setString('idToken', result['idToken']);
+        await prefs.setString('refreshToken', result['refreshToken']);
         // Success
         emailController.clear();
         passwordController.clear();
@@ -60,7 +65,7 @@ class _RegisterState extends State<Register> {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
             transitionsBuilder: (
               context,
               animation,
@@ -141,18 +146,14 @@ class _RegisterState extends State<Register> {
       });
       // Force show account chooser every time
       await GoogleSignIn().signOut();
-      // 1. Show the Google "Choose an account" pop-up
+      // Choose an account
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      // If the user closes the pop-up, we stop here.
       if (googleUser == null) {
         setState(() {
           isLoading = false;
         });
         return;
       }
-
-      // 2. Get the special "ticket" (ID Token) from the chosen account.
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
@@ -164,7 +165,6 @@ class _RegisterState extends State<Register> {
         throw Exception('Could not get Google ID Token.');
       }
 
-      // 3. Send the ticket to our Firebase API.
       final response = await http.post(
         Uri.parse(Apiservice.googleSignIn),
         headers: {"Content-Type": "application/json"},
@@ -175,18 +175,21 @@ class _RegisterState extends State<Register> {
           "returnIdpCredential": true,
         }),
       );
-
-      // 4. Check if Firebase says "OK" (status code 200).
+   
+    
       if (response.statusCode == 200) {
         setState(() {
           isLoading = false;
         });
-        // If successful, the main.dart listener will automatically navigate to Home.
-        // We don't need a Navigator.push here anymore.
+           final result = json.decode(response.body);
+           final prefs=await SharedPreferences.getInstance();
+           await prefs.setString('idToken', result['idToken']);
+           await prefs.setString('refreshToken', result['refreshToken']);
+
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
             transitionsBuilder: (
               context,
               animation,

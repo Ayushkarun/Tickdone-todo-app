@@ -5,6 +5,7 @@ to build apk
 
 AIzaSyAabkwoAsDrqHHjd83GebVChCo4Maqp6aU
 
+
  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
 
  import 'package:flutter/material.dart';
@@ -54,7 +55,33 @@ test
 tickdone@gmail.com
 tick123
 
-
+          // ListTile(
+          //   onTap: () {},
+          //   contentPadding: EdgeInsets.only(left: 80),
+          //   leading: Icon(Icons.person),
+          //   title: Text(
+          //     'Change Name',
+          //     style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+          //   ),
+          // ),
+          // ListTile(
+          //   onTap: () {},
+          //   contentPadding: EdgeInsets.only(left: 80),
+          //   leading: Icon(Icons.key),
+          //   title: Text(
+          //     'Change Password',
+          //     style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+          //   ),
+          // ),
+          // ListTile(
+          //   onTap: () {},
+          //   contentPadding: EdgeInsets.only(left: 80),
+          //   leading: Icon(Icons.info),
+          //   title: Text(
+          //     'About Us',
+          //     style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+          //   ),
+          // ),
 cachedimage pageBuilder
 /*
 // ignore_for_file: use_build_context_synchronously

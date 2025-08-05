@@ -8,16 +8,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-@override
-Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async => false, 
-    child: Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, 
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      height: double.infinity,
+      child: Center(
+       child: Text('Home'),
       ),
-      body: Center(child: Text('Home')),
-    ),
-  );
-}
+    );
+  }
 }

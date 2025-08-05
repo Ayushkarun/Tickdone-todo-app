@@ -8,6 +8,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Screens/Home/bottomnav.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -89,7 +90,6 @@ class _LoginpageState extends State<Loginpage> {
     }
   }
 
-  // DIALOG TO GET EMAIL FOR FORGOT PASSWORD
   void showForgotPasswordDialog() {
     final TextEditingController emailControllerforgot = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -210,7 +210,7 @@ class _LoginpageState extends State<Loginpage> {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
             transitionsBuilder: (
               context,
               animation,
@@ -251,7 +251,7 @@ class _LoginpageState extends State<Loginpage> {
             displayMessage = "This user account has been disabled.";
           } else {
             displayMessage =
-                errorMessage; // fallback: show Firebase raw message
+                errorMessage; 
           }
         }
 
@@ -295,12 +295,10 @@ class _LoginpageState extends State<Loginpage> {
       setState(() {
         isLoading = true;
       });
-      // Force show account chooser every time
       await GoogleSignIn().signOut();
-      // 1. Show the Google "Choose an account" pop-up
+
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      // If the user closes the pop-up, we stop here.
       if (googleUser == null) {
         setState(() {
           isLoading = false;
@@ -308,7 +306,6 @@ class _LoginpageState extends State<Loginpage> {
         return;
       }
 
-      // 2. Get the special "ticket" (ID Token) from the chosen account.
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
@@ -320,7 +317,6 @@ class _LoginpageState extends State<Loginpage> {
         throw Exception('Could not get Google ID Token.');
       }
 
-      // 3. Send the ticket to our Firebase API.
       final response = await http.post(
         Uri.parse(Apiservice.googleSignIn),
         headers: {"Content-Type": "application/json"},
@@ -339,12 +335,11 @@ class _LoginpageState extends State<Loginpage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
-        // If successful, the main.dart listener will automatically navigate to Home.
-        // We don't need a Navigator.push here anymore.
+
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Home(),
+            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
             transitionsBuilder: (
               context,
               animation,
