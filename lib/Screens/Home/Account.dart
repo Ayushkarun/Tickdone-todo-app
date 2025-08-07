@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Screens/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Aboutus.dart';
-// import 'package:url_launcher/url_launcher.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -13,102 +12,211 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
- Future<void> helpalert(BuildContext context) async {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          
-          borderRadius: BorderRadius.circular(15.r),
-        ),
-        title: Text(
-          'Send Feedback?',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Poppins',
-            fontSize: 20.sp,
+  
+  TextEditingController passwordchange = TextEditingController();
+
+  Future<void> helpalert(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
           ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Please Mail us on\n',
-              style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+          title: Text(
+            'Send Feedback?',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Poppins',
+              fontSize: 20.sp,
             ),
-            Text(
-              'tickdoneapp@gmail.com',
-              style: TextStyle(color: Colors.lightBlueAccent, fontSize: 14.sp),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Please Mail us on\n',
+                style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+              ),
+              Text(
+                'tickdoneapp@gmail.com',
+                style: TextStyle(
+                  color: Colors.lightBlueAccent,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Ok',
+                style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+              ),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Ok', style: TextStyle(color:Colors.white,fontFamily: 'Poppins')),
+        );
+      },
+    );
+  }
+
+  Future<void> changepassword(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.all(20.w),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(16.w),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: constraints.maxHeight * 0.6, // Limit height
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Change Password',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'We will send Password reset link in mail',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      TextFormField(
+                        controller: passwordchange,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Enter your email",
+                          hintStyle: TextStyle(color: Colors.white70),
+                          filled: true,
+                          fillColor: Colors.grey[900],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      SizedBox(height: 12.h),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Send Reset Link'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
-         
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 18.h),
-            color: Colors.black,
-            height: constraints.maxHeight, // Use available height
-            width: double.infinity,
+ @override
+Widget build(BuildContext context) {
+  return SafeArea(
+    child: Scaffold(
+      backgroundColor: Colors.black,
+     body: LayoutBuilder(
+  builder: (context, constraints) {
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: constraints.maxHeight,
+          minWidth: constraints.maxWidth,
+        ),
+        child: IntrinsicHeight(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
             child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween, // Distribute space
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Pushes bottom part down
               children: [
                 Column(
                   children: [
-                    SizedBox(height: 20.h),
-                    CircleAvatar(
-                      radius: 35.r,
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.black,
-                        size: 40.sp,
+                    // Profile card
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                      elevation: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF10083F),
+                              Color(0xFF2B1B80),
+                              Color(0xFF5C39FF),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 7.h,
+                            horizontal: 2.w,
+                          ),
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 35.r,
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.black,
+                                  size: 40.sp,
+                                ),
+                              ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                'Ayush Karun',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24.sp,
-                      ),
-                    ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 25.h),
+
+                    // Buttons
                     TextButton.icon(
                       onPressed: () {},
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
+                      icon: Icon(Icons.person, color: Colors.white, size: 24.sp),
                       label: Text(
                         'Change Name',
                         style: TextStyle(color: Colors.white, fontSize: 16.sp),
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () => changepassword(context),
                       icon: Icon(Icons.key, color: Colors.white, size: 24.sp),
                       label: Text(
                         'Change Password',
@@ -119,7 +227,12 @@ class _AccountState extends State<Account> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Aboutus()),
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => Aboutus(),
+                            transitionsBuilder: (_, animation, __, child) {
+                              return FadeTransition(opacity: animation, child: child);
+                            },
+                          ),
                         );
                       },
                       icon: Icon(Icons.info, color: Colors.white, size: 24.sp),
@@ -128,14 +241,8 @@ class _AccountState extends State<Account> {
                         style: TextStyle(color: Colors.white, fontSize: 16.sp),
                       ),
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
                     TextButton(
-                      onPressed: () {
-                        helpalert(context);
-                      },
+                      onPressed: () => helpalert(context),
                       child: Text(
                         'Help & Feedback',
                         style: TextStyle(
@@ -145,35 +252,64 @@ class _AccountState extends State<Account> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.h),
+                  ],
+                ),
+
+                // Bottom logout + version info
+                Column(
+                  children: [
                     TextButton.icon(
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.clear();
-
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => Loginpage()),
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => Loginpage(),
+                            transitionsBuilder: (_, animation, __, child) {
+                              return FadeTransition(opacity: animation, child: child);
+                            },
+                            transitionDuration: Duration(milliseconds: 500),
+                          ),
                           (route) => false,
                         );
                       },
-                      icon: Icon(
-                        Icons.logout_sharp,
-                        color: Colors.red,
-                        size: 24.sp,
-                      ),
+                      icon: Icon(Icons.logout_sharp, color: Colors.red, size: 24.sp),
                       label: Text(
                         'Log out',
                         style: TextStyle(color: Colors.red, fontSize: 16.sp),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    Text(
+                      'Version 1.0.0',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 10.sp,
+                        color: Colors.white60,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'ALL RIGHTS RESERVED',
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        fontFamily: 'Poppins',
+                        color: Colors.white60,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
-  }
+  },
+),
+
+    ),
+  );
+}
 }
