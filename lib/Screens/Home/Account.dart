@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Screens/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Aboutus.dart';
+import 'package:http/http.dart' as http;
+import 'package:tickdone/Service/api_service.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -12,12 +17,64 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-
-  Future<void> forgotPassword(String email) async{
-
-    final response = 
+  Future<void> forgotPassword(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Apiservice.forgotPassword),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({'requestType': 'PASSWORD_RESET', 'email': email}),
+      );
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success!',
+              message: 'Password Change Link sent to your mail',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        final result = json.decode(response.body);
+        String displayMessage = "An error occurred. Please try again";
+        if (result.containsKey("error") &&
+            result["error"].containsKey("message")) {
+          final errorMessage = result["error"]["message"];
+          if (errorMessage == "EMAIL_NOT_FOUND") {
+            displayMessage = "No user found with this email";
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            content: AwesomeSnackbarContent(
+              title: 'oh snap!',
+              message: displayMessage,
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Error!',
+            message: 'Something went wrong.Please check network connection',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
+    }
   }
-
 
   Future<void> helpalert(BuildContext context) async {
     return showDialog(
@@ -26,6 +83,7 @@ class _AccountState extends State<Account> {
         return AlertDialog(
           backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white, width: 1),
             borderRadius: BorderRadius.circular(15.r),
           ),
           title: Text(
@@ -67,88 +125,111 @@ class _AccountState extends State<Account> {
     );
   }
 
-  Future<void> changepassword(BuildContext context) async {
-      TextEditingController passwordchange = TextEditingController();
-       final formKey = GlobalKey<FormState>();
-    return showDialog(
+  void showForgotPasswordDialog() {
+    final TextEditingController emailControllerforgot = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.87),
       builder: (context) {
-        return Dialog(
+        return AlertDialog(
           backgroundColor: Colors.black,
-          surfaceTintColor: Colors.transparent,
-          insetPadding: EdgeInsets.all(20.w),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: constraints.maxHeight * 0.6, // Limit height
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Change Password',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'We will send Password reset link in mail',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Poppins',
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Form(
-                        key: formKey,
-                        child: TextFormField(
-                          controller: passwordchange,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: "Enter your email",
-                            hintStyle: TextStyle(color: Colors.white70),
-                        
-                            filled: true,
-                            fillColor: Colors.grey[900],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF10083F),
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          'Send Reset Link',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white, width: 1),
+            borderRadius: BorderRadius.circular(18.r),
           ),
+          title: Text(
+            "Change Password",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 20.sp,
+            ),
+          ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Enter email to get a password reset link.",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white70, // Slightly dimmer for better UI
+                  fontSize: 12.sp,
+                ),
+              ),
+              Form(
+                key: formKey,
+                child: TextFormField(
+                  controller: emailControllerforgot,
+                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: const Color(0xFF1C0E6F)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1C0E6F),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              ),
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  forgotPassword(emailControllerforgot.text.trim());
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text(
+                "Send Link",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -158,6 +239,7 @@ class _AccountState extends State<Account> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
         body: LayoutBuilder(
           builder: (context, constraints) {
@@ -257,7 +339,7 @@ class _AccountState extends State<Account> {
                               ),
                             ),
                             TextButton.icon(
-                              onPressed: () => changepassword(context),
+                              onPressed: () => showForgotPasswordDialog(),
                               icon: Icon(
                                 Icons.key,
                                 color: Colors.white,
