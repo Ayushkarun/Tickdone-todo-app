@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:tickdone/Screens/Login/login.dart';
+import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -58,6 +58,7 @@ class _RegisterState extends State<Register> {
         final prefs=await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
+        await prefs.setString('userUID', result['localId']);
         // Success
         emailController.clear();
         passwordController.clear();

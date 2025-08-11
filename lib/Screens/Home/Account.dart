@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Screens/Login/login.dart';
+import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Service/api_service.dart';
+import 'Createprofile.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -324,7 +325,9 @@ class _AccountState extends State<Account> {
 
                             // Buttons
                             TextButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Createprofile(),));
+                              },
                               icon: Icon(
                                 Icons.person,
                                 color: Colors.white,

@@ -205,6 +205,7 @@ class _LoginpageState extends State<Loginpage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
+        await prefs.setString('userUID', result['localId']);
         emailcontrollerlogin.clear();
         passwordControllerlogin.clear();
         Navigator.pushReplacement(
