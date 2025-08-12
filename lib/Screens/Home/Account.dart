@@ -18,6 +18,48 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  String? _userName; // To store the user's name
+  bool _isProfileLoading = true; // To show a loading spinner
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the user's profile as soon as the widget is created
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('userUID');
+    final idToken = prefs.getString('idToken');
+
+    if (uid == null || idToken == null) {
+      setState(() => _isProfileLoading = false);
+      return;
+    }
+
+    final url = Uri.parse(
+      '${Apiservice.firestoreBaseUrl}/users/$uid?key=${Apiservice.apiKey}',
+    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $idToken'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // Find the 'name' field and get its 'stringValue'
+        setState(() {
+          _userName = data['fields']['name']['stringValue'];
+        });
+      }
+    } catch (e) {
+      // Handle error if needed
+    } finally {
+      setState(() => _isProfileLoading = false);
+    }
+  }
+
   Future<void> forgotPassword(String email) async {
     try {
       final response = await http.post(
@@ -124,6 +166,147 @@ class _AccountState extends State<Account> {
         );
       },
     );
+  }
+
+  void showChangeNameDialog() {
+    final TextEditingController nameController = TextEditingController();
+    final nameKey = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.87),
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white, width: 1),
+            borderRadius: BorderRadius.circular(18.r),
+          ),
+          title: Text(
+            "Change Name",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 20.sp,
+            ),
+          ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Enter Your New Name.",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white70, // Slightly dimmer for better UI
+                  fontSize: 12.sp,
+                ),
+              ),
+              Form(
+                key: nameKey,
+                child: TextFormField(
+                  controller: nameController,
+                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                  decoration: InputDecoration(
+                    labelText: "Name",
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: const Color(0xFF1C0E6F)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Name cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1C0E6F),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              ),
+              onPressed: () {
+                if (nameKey.currentState!.validate()) {
+                  final newName = nameController.text.trim();
+                  updateUserName(newName);
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text(
+                "Save",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> updateUserName(String newName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('userUID');
+    final idToken = prefs.getString('idToken');
+
+    final url = Uri.parse(
+      '${Apiservice.firestoreBaseUrl}/users/$uid?updateMask.fieldPaths=name&key=${Apiservice.apiKey}',
+    );
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $idToken',
+      },
+      body: json.encode({
+        'fields': {
+          'name': {'stringValue': newName},
+        },
+      }),
+    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name updated successfully!')),
+      );
+      // REFRESH the profile to show the new name
+      _fetchUserProfile();
+      // You might want to refresh the state to show the new name on the page
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to update name.')));
+    }
   }
 
   void showForgotPasswordDialog() {
@@ -303,16 +486,21 @@ class _AccountState extends State<Account> {
                                             ),
                                           ),
                                           SizedBox(height: 10.h),
-                                          Text(
-                                            'Ayush Karun',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
+                                          if (_isProfileLoading)
+                                            const CircularProgressIndicator(
                                               color: Colors.white,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24.sp,
+                                            )
+                                          else
+                                            Text(
+                                              _userName ?? 'No Name Found',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24.sp,
+                                              ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                     ),
@@ -325,9 +513,7 @@ class _AccountState extends State<Account> {
 
                             // Buttons
                             TextButton.icon(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => Createprofile(),));
-                              },
+                              onPressed: showChangeNameDialog,
                               icon: Icon(
                                 Icons.person,
                                 color: Colors.white,

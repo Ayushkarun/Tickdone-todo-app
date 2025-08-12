@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
+import 'package:tickdone/Screens/Home/Createprofile.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -27,8 +28,38 @@ class _LoginpageState extends State<Loginpage> {
 
   final loginkey = GlobalKey<FormState>();
 
+  Future<void> checkprofileandNavigate() async{
+    final prefs=await SharedPreferences.getInstance();
+    final uid=prefs.getString('userUID');
+    final idToken=prefs.getString('idToken');
+
+    final url = Uri.parse('${Apiservice.firestoreBaseUrl}/users/$uid?key=${Apiservice.apiKey}');
+
+    try{
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $idToken'
+        },
+      );
+      if(response.statusCode==404){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Createprofile(),));
+      }
+      else if(response.statusCode==200){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Bottomnav(),));
+      }
+      else{
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Bottomnav(),));
+      }
+
+    }catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error Occurred'))
+      );
+    }
+  }
+
   // FORGOT PASSWORD
-  
   Future<void> forgotPassword(String email) async {
     try {
       final response = await http.post(
@@ -208,20 +239,22 @@ class _LoginpageState extends State<Loginpage> {
         await prefs.setString('userUID', result['localId']);
         emailcontrollerlogin.clear();
         passwordControllerlogin.clear();
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
-        );
+
+        await checkprofileandNavigate();
+        // Navigator.pushReplacement(
+        //   context,
+        //   PageRouteBuilder(
+        //     pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
+        //     transitionsBuilder: (
+        //       context,
+        //       animation,
+        //       secondaryAnimation,
+        //       child,
+        //     ) {
+        //       return FadeTransition(opacity: animation, child: child);
+        //     },
+        //   ),
+        // );
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -336,21 +369,24 @@ class _LoginpageState extends State<Loginpage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
+        await prefs.setString('userUID', result['localId']);
 
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
-        );
+        await checkprofileandNavigate();
+
+        // Navigator.pushReplacement(
+        //   context,
+        //   PageRouteBuilder(
+        //     pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
+        //     transitionsBuilder: (
+        //       context,
+        //       animation,
+        //       secondaryAnimation,
+        //       child,
+        //     ) {
+        //       return FadeTransition(opacity: animation, child: child);
+        //     },
+        //   ),
+        // );
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

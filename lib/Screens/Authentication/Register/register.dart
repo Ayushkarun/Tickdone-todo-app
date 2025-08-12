@@ -6,12 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Authentication/Login/login.dart';
-import 'package:tickdone/Screens/Home/home.dart';
 import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Screens/Home/bottomnav.dart';
+import 'package:tickdone/Screens/Home/Createprofile.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -55,7 +55,7 @@ class _RegisterState extends State<Register> {
       final result = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        final prefs=await SharedPreferences.getInstance();
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
         await prefs.setString('userUID', result['localId']);
@@ -66,7 +66,8 @@ class _RegisterState extends State<Register> {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
+            pageBuilder:
+                (context, animation, secondaryAnimation) => Createprofile(),
             transitionsBuilder: (
               context,
               animation,
@@ -176,21 +177,22 @@ class _RegisterState extends State<Register> {
           "returnIdpCredential": true,
         }),
       );
-   
-    
+
       if (response.statusCode == 200) {
         setState(() {
           isLoading = false;
         });
-           final result = json.decode(response.body);
-           final prefs=await SharedPreferences.getInstance();
-           await prefs.setString('idToken', result['idToken']);
-           await prefs.setString('refreshToken', result['refreshToken']);
+        final result = json.decode(response.body);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('idToken', result['idToken']);
+        await prefs.setString('refreshToken', result['refreshToken']);
+        await prefs.setString('userUID', result['localId']);
 
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
+            pageBuilder:
+                (context, animation, secondaryAnimation) =>  const Createprofile(),
             transitionsBuilder: (
               context,
               animation,
