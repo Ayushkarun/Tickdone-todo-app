@@ -19,6 +19,7 @@ class _BottomnavState extends State<Bottomnav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedindex,
         onTap: (int index) {
@@ -29,21 +30,18 @@ class _BottomnavState extends State<Bottomnav> {
         backgroundColor: Colors.black,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor:  Color(0xFF2B1B80),
+        selectedItemColor: Color(0xFF2B1B80),
         unselectedItemColor: Colors.white,
-        showSelectedLabels: false, 
+        showSelectedLabels: false,
         showUnselectedLabels: false,
-        iconSize: 23.sp, 
+        iconSize: 23.sp,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: "",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
         ],
       ),
-      body: widgetoptions.elementAt(selectedindex),
+      body: IndexedStack(index: selectedindex, children: widgetoptions),
     );
   }
 }

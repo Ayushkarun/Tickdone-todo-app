@@ -10,7 +10,6 @@ import 'package:tickdone/Service/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Screens/Home/bottomnav.dart';
 import 'package:tickdone/Screens/Home/Createprofile.dart';
 
 class Register extends StatefulWidget {

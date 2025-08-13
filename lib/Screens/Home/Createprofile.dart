@@ -1,5 +1,4 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +21,7 @@ class _CreateprofileState extends State<Createprofile> {
   bool loading = false;
 
   Future<void> saveprofile() async {
+    FocusScope.of(context).unfocus(); 
     bool isValid = formkey.currentState!.validate();
     if (!isValid) {
       return;
@@ -44,56 +44,67 @@ class _CreateprofileState extends State<Createprofile> {
       '${Apiservice.firestoreBaseUrl}/users/$uid?key=${Apiservice.apiKey}',
     );
 
-  try{
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $idToken',
-      },
-      body: json.encode({
-        'fields': {
-          'name': {'stringValue': userName.text},
+    try {
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
         },
-      }),
-    );
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Bottomnav()),
+        body: json.encode({
+          'fields': {
+            'name': {'stringValue': userName.text},
+          },
+        }),
       );
-    } else {
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const Bottomnav(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            behavior: SnackBarBehavior.floating,
+            content: AwesomeSnackbarContent(
+              title: 'Failed',
+              message: 'Failed to save profile.Please try again',
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           behavior: SnackBarBehavior.floating,
           content: AwesomeSnackbarContent(
-            title: 'Failed',
-            message: 'Failed to save profile.Please try again',
+            title: 'Error',
+            message: 'An error occurred. Check your connection',
             contentType: ContentType.failure,
           ),
         ),
       );
+    } finally {
+      setState(() {
+        loading = false;
+      });
     }
-  }catch(e){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        behavior: SnackBarBehavior.floating,
-        content: AwesomeSnackbarContent(
-        title: 'Error',
-        message: 'An error occurred. Check your connection',
-        contentType: ContentType.failure))
-    );
-
-  }
-  finally{
-    setState(() {
-      loading=false;
-    });
-  }
   }
 
   @override
@@ -136,11 +147,10 @@ class _CreateprofileState extends State<Createprofile> {
                     SizedBox(height: 20.h),
                     TextFormField(
                       validator: (value) {
-                        if(value == null|| value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return 'Please enter your name';
                         }
                         return null;
-                      
                       },
                       controller: userName,
                       keyboardType: TextInputType.name,
@@ -166,31 +176,31 @@ class _CreateprofileState extends State<Createprofile> {
                       style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(height: 20.h),
-                    if(loading)
-                    const CircularProgressIndicator(color: Colors.white,)
+                    if (loading)
+                      const CircularProgressIndicator(color: Colors.white)
                     else
-                    ElevatedButton(
-                      onPressed: saveprofile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1C0E6F),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 30.w,
-                          vertical: 12.h,
+                      ElevatedButton(
+                        onPressed: saveprofile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C0E6F),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 30.w,
+                            vertical: 12.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins',
+                            fontSize: 20.sp,
+                          ),
                         ),
                       ),
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Poppins',
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

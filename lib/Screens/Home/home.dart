@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,10 +14,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      height: double.infinity,
-      child: Center(
-       child: Text('Home'),
-      ),
+      child: SafeArea(child: 
+      Padding(padding: EdgeInsets.symmetric(horizontal: 5.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row()
+        ],
+
+      ),)),
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Service/api_service.dart';
-import 'Createprofile.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -337,7 +336,7 @@ class _AccountState extends State<Account> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Enter email to get a password reset link.",
+                "Enter email to get a password change link.",
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   color: Colors.white70, // Slightly dimmer for better UI
@@ -421,244 +420,211 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.black,
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                  minWidth: constraints.maxWidth,
-                ),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
-                    ),
-                    child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceBetween, // Pushes bottom part down
-                      children: [
-                        Column(
-                          children: [
-                            // Profile card
-                            Center(
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.95,
+    return Container(
+      color: Colors.black,
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+          child: Column(
+            // The main Column that organizes the screen
+            children: [
+              // This Expanded widget makes the content area fill all available space
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // --- ALL YOUR TOP CONTENT GOES HERE ---
 
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40.r),
-                                  ),
-                                  elevation: 4,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFF10083F),
-                                          Color(0xFF2B1B80),
-                                          Color(0xFF5C39FF),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 7.h,
-                                        horizontal: 2.w,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 35.r,
-                                            backgroundColor: Colors.white,
-                                            child: Icon(
-                                              Icons.person,
-                                              color: Colors.black,
-                                              size: 40.sp,
-                                            ),
-                                          ),
-                                          SizedBox(height: 10.h),
-                                          if (_isProfileLoading)
-                                            const CircularProgressIndicator(
-                                              color: Colors.white,
-                                            )
-                                          else
-                                            Text(
-                                              _userName ?? 'No Name Found',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'Poppins',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 24.sp,
-                                              ),
-                                            ),
-                                        ],
+                      // Profile card
+                      Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.r),
+                            ),
+                            elevation: 4,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF10083F),
+                                    Color(0xFF2B1B80),
+                                    Color(0xFF5C39FF),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 7.h,
+                                  horizontal: 2.w,
+                                ),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 35.r,
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.black,
+                                        size: 40.sp,
                                       ),
                                     ),
-                                  ),
+                                    SizedBox(height: 10.h),
+                                    if (_isProfileLoading)
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    else
+                                      Text(
+                                        _userName ?? 'No Name Found',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 24.sp,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
+                          ),
+                        ),
+                      ),
 
-                            SizedBox(height: 25.h),
+                      SizedBox(height: 25.h),
 
-                            // Buttons
-                            TextButton.icon(
-                              onPressed: showChangeNameDialog,
-                              icon: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 24.sp,
-                              ),
-                              label: Text(
-                                'Change Name',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () => showForgotPasswordDialog(),
-                              icon: Icon(
-                                Icons.key,
-                                color: Colors.white,
-                                size: 24.sp,
-                              ),
-                              label: Text(
-                                'Change Password',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => Aboutus(),
-                                    transitionsBuilder: (
-                                      _,
-                                      animation,
-                                      __,
-                                      child,
-                                    ) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-                                    },
-                                  ),
+                      // Buttons
+                      TextButton.icon(
+                        onPressed: showChangeNameDialog,
+                        icon: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                        label: Text(
+                          'Change Name',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => showForgotPasswordDialog(),
+                        icon: Icon(Icons.key, color: Colors.white, size: 24.sp),
+                        label: Text(
+                          'Change Password',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => Aboutus(),
+                              transitionsBuilder: (_, animation, __, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
                                 );
                               },
-                              icon: Icon(
-                                Icons.info,
-                                color: Colors.white,
-                                size: 24.sp,
-                              ),
-                              label: Text(
-                                'About Us',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
                             ),
-                            TextButton(
-                              onPressed: () => helpalert(context),
-                              child: Text(
-                                'Help & Feedback',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
-                          ],
+                          );
+                        },
+                        icon: Icon(
+                          Icons.info,
+                          color: Colors.white,
+                          size: 24.sp,
                         ),
-
-                        // Bottom logout + version info
-                        Column(
-                          children: [
-                            TextButton.icon(
-                              onPressed: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.clear();
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => Loginpage(),
-                                    transitionsBuilder: (
-                                      _,
-                                      animation,
-                                      __,
-                                      child,
-                                    ) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration: Duration(
-                                      milliseconds: 500,
-                                    ),
-                                  ),
-                                  (route) => false,
-                                );
-                              },
-                              icon: Icon(
-                                Icons.logout_sharp,
-                                color: Colors.red,
-                                size: 24.sp,
-                              ),
-                              label: Text(
-                                'Log out',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Text(
-                              'Version 1.0.0',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 10.sp,
-                                color: Colors.white60,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'ALL RIGHTS RESERVED',
-                              style: TextStyle(
-                                fontSize: 8.sp,
-                                fontFamily: 'Poppins',
-                                color: Colors.white60,
-                              ),
-                            ),
-                          ],
+                        label: Text(
+                          'About Us',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                      TextButton(
+                        onPressed: () => helpalert(context),
+                        child: Text(
+                          'Help & Feedback',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
+
+              // --- THE STICKY FOOTER CONTENT GOES HERE ---
+              // It is outside the Expanded widget, so it's pushed to the bottom.
+              Column(
+                children: [
+                  TextButton.icon(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.clear();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => const Loginpage(),
+                          transitionsBuilder: (_, animation, __, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    icon: Icon(
+                      Icons.logout_sharp,
+                      color: Colors.red,
+                      size: 24.sp,
+                    ),
+                    label: Text(
+                      'Log out',
+                      style: TextStyle(color: Colors.red, fontSize: 16.sp),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    'Version 1.0.0',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 10.sp,
+                      color: Colors.white60,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'ALL RIGHTS RESERVED',
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      fontFamily: 'Poppins',
+                      color: Colors.white60,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

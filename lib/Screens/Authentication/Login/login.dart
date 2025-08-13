@@ -1,4 +1,4 @@
- import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
@@ -28,34 +28,74 @@ class _LoginpageState extends State<Loginpage> {
 
   final loginkey = GlobalKey<FormState>();
 
-  Future<void> checkprofileandNavigate() async{
-    final prefs=await SharedPreferences.getInstance();
-    final uid=prefs.getString('userUID');
-    final idToken=prefs.getString('idToken');
+  Future<void> checkprofileandNavigate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('userUID');
+    final idToken = prefs.getString('idToken');
 
-    final url = Uri.parse('${Apiservice.firestoreBaseUrl}/users/$uid?key=${Apiservice.apiKey}');
+    final url = Uri.parse(
+      '${Apiservice.firestoreBaseUrl}/users/$uid?key=${Apiservice.apiKey}',
+    );
 
-    try{
+    try {
       final response = await http.get(
         url,
-        headers: {
-          'Authorization': 'Bearer $idToken'
-        },
+        headers: {'Authorization': 'Bearer $idToken'},
       );
-      if(response.statusCode==404){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Createprofile(),));
+      if (response.statusCode == 404) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) =>
+                    const Createprofile(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      } else if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const Bottomnav(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => const Bottomnav(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
       }
-      else if(response.statusCode==200){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Bottomnav(),));
-      }
-      else{
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Bottomnav(),));
-      }
-
-    }catch(e){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error Occurred'))
-      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('An error Occurred')));
     }
   }
 
@@ -241,20 +281,6 @@ class _LoginpageState extends State<Loginpage> {
         passwordControllerlogin.clear();
 
         await checkprofileandNavigate();
-        // Navigator.pushReplacement(
-        //   context,
-        //   PageRouteBuilder(
-        //     pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
-        //     transitionsBuilder: (
-        //       context,
-        //       animation,
-        //       secondaryAnimation,
-        //       child,
-        //     ) {
-        //       return FadeTransition(opacity: animation, child: child);
-        //     },
-        //   ),
-        // );
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -284,8 +310,7 @@ class _LoginpageState extends State<Loginpage> {
           } else if (errorMessage == "USER_DISABLED") {
             displayMessage = "This user account has been disabled.";
           } else {
-            displayMessage =
-                errorMessage; 
+            displayMessage = errorMessage;
           }
         }
 
