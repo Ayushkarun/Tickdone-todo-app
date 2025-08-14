@@ -14,7 +14,7 @@ class Bottomnav extends StatefulWidget {
 class _BottomnavState extends State<Bottomnav> {
   int selectedindex = 0;
 
-  List<Widget> widgetoptions = [Home(), Calender(), Account()];
+ final List<Widget> widgetoptions = [Home(), Calender(), Account()];
 
   @override
   Widget build(BuildContext context) {

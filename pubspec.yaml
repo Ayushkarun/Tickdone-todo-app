@@ -48,6 +48,9 @@ dependencies:
   action_slider: ^0.7.0
   shared_preferences: ^2.2.2
   # url_launcher: ^6.2.5
+  glassmorphism: ^3.0.0
+  # gradient_widgets: ^0.6.0
+  blurrycontainer: ^2.1.0
 
 
 dev_dependencies:
