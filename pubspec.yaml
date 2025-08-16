@@ -51,6 +51,7 @@ dependencies:
   glassmorphism: ^3.0.0
   # gradient_widgets: ^0.6.0
   blurrycontainer: ^2.1.0
+  provider: ^6.1.5
 
 
 dev_dependencies:

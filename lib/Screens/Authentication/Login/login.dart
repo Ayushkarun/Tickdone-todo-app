@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Home/Createprofile.dart';
-import 'package:tickdone/Service/api_service.dart';
+import 'package:tickdone/Service/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -641,7 +641,22 @@ class _LoginpageState extends State<Loginpage> {
                           },
                         ),
                       ),
-                      SizedBox(height: 20.h),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            showForgotPasswordDialog();
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 17.h),
 
                       Center(
                         child: SizedBox(
@@ -699,23 +714,19 @@ class _LoginpageState extends State<Loginpage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 14.h),
+                      SizedBox(height: 20.h),
 
                       Center(
-                        child: TextButton(
-                          onPressed: () {
-                            showForgotPasswordDialog();
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              color: const Color.fromARGB(104, 255, 255, 255),
-                            ),
+                        child: Text(
+                          '2025 @All Rights Reserved',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 8.sp,
+                            color: Colors.white60,
                           ),
                         ),
                       ),
-                      SizedBox(height: 5.h),
+                      SizedBox(height: 10.h),
 
                       Row(
                         children: [
@@ -737,7 +748,7 @@ class _LoginpageState extends State<Loginpage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.h),
+                      SizedBox(height: 8.h),
                       Center(
                         child: SizedBox(
                           height: 45.h,

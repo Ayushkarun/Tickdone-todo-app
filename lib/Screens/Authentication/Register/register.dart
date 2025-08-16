@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Authentication/Login/login.dart';
-import 'package:tickdone/Service/api_service.dart';
+import 'package:tickdone/Service/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,7 +191,8 @@ class _RegisterState extends State<Register> {
           context,
           PageRouteBuilder(
             pageBuilder:
-                (context, animation, secondaryAnimation) =>  const Createprofile(),
+                (context, animation, secondaryAnimation) =>
+                    const Createprofile(),
             transitionsBuilder: (
               context,
               animation,
@@ -284,7 +285,7 @@ class _RegisterState extends State<Register> {
                       'assets/images/Logo/logofinal.png',
                       height: 60.h,
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 7.h),
                     Text(
                       'Register',
                       style: TextStyle(
@@ -295,6 +296,16 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 5.h),
+                    Text(
+                      "Start managing your tasks today.",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.white70,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+
+                    SizedBox(height: 10.h),
                     Text(
                       'E-mail',
                       style: TextStyle(
@@ -530,20 +541,33 @@ class _RegisterState extends State<Register> {
                             style: TextStyle(
                               fontSize: 10.sp,
                               color: Colors.white,
+                              fontFamily: 'Poppins',
                             ),
                           ),
-                          SizedBox(width: 5.w),
+                          SizedBox(width: 8.w),
                           Text(
                             'Privacy Policy',
                             style: TextStyle(
                               fontSize: 10.sp,
                               color: Color.fromARGB(255, 119, 95, 253),
+                              fontFamily: 'Poppins',
                             ),
                           ),
                         ],
                       ),
                     ),
-
+                    SizedBox(height: 8.h),
+                    Center(
+                      child: Text(
+                        '2025 @All Rights Reserved',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 9.sp,
+                          color: Colors.white60,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
                     Row(
                       children: [
                         Expanded(

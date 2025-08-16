@@ -7,7 +7,7 @@ import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
-import 'package:tickdone/Service/api_service.dart';
+import 'package:tickdone/Service/Api/api_service.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
