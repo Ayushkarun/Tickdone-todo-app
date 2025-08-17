@@ -3,6 +3,7 @@ import 'package:tickdone/Screens/Home/Account.dart';
 import 'package:tickdone/Screens/Home/calender.dart';
 import 'package:tickdone/Screens/Home/home.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tickdone/Screens/Task/NewTask.dart';
 
 class Bottomnav extends StatefulWidget {
   const Bottomnav({super.key});
@@ -14,10 +15,23 @@ class Bottomnav extends StatefulWidget {
 class _BottomnavState extends State<Bottomnav> {
   int selectedindex = 0;
 
- final List<Widget> widgetoptions = [Home(), Calender(), Account()];
+  final List<Widget> widgetoptions = [Home(), Calender(), Account()];
 
   @override
   Widget build(BuildContext context) {
+    Widget? floatbutton;
+    if (selectedindex == 0) {
+      floatbutton = FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Newtask(),));
+        },
+        backgroundColor: const Color(0xFF1C0E6F),
+        child: Icon(Icons.add,color: Colors.white,),
+      );
+    }
+    else{
+      floatbutton=null;
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
@@ -42,6 +56,7 @@ class _BottomnavState extends State<Bottomnav> {
         ],
       ),
       body: IndexedStack(index: selectedindex, children: widgetoptions),
+       floatingActionButton: floatbutton,
     );
   }
 }
