@@ -52,6 +52,7 @@ dependencies:
   # gradient_widgets: ^0.6.0
   blurrycontainer: ^2.1.0
   provider: ^6.1.5
+  day_night_time_picker: ^1.3.1
 
 
 dev_dependencies:
