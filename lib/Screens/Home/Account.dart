@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tickdone/Service/Provider/nameprovider.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Service/Api/api_service.dart';
@@ -298,9 +300,18 @@ class _AccountState extends State<Account> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Name updated successfully!')),
       );
-      // REFRESH the profile to show the new name
-      _fetchUserProfile();
-      // You might want to refresh the state to show the new name on the page
+
+      // _fetchUserProfile();
+      final userNameProvider = Provider.of<UserNameProvider>(
+        context,
+        listen: false,
+      );
+    
+      userNameProvider.setUserName(newName);
+
+      setState(() {
+        _userName = newName;
+      });
     } else {
       ScaffoldMessenger.of(
         context,

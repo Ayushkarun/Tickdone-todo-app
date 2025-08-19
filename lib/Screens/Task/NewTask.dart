@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:tickdone/Screens/Task/Taskdesign.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});
@@ -10,7 +11,10 @@ class Newtask extends StatefulWidget {
 }
 
 class _NewtaskState extends State<Newtask> {
-  Time _time = Time(hour: 10, minute: 30, second: 0);
+Time _time = Time(
+  hour: DateTime.now().hour,
+  minute: DateTime.now().minute,
+);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,11 @@ class _NewtaskState extends State<Newtask> {
                     Text(
                       "Selected Time: ${_time.format(context)}",
                       style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                    
                     ),
+                  ElevatedButton(onPressed: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => CreateTaskPage(),));
+                  }, child: Text('Task'))
                   ],
                 ),
               ),

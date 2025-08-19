@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:provider/provider.dart';
+import 'package:tickdone/Service/Provider/nameprovider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -30,14 +32,25 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hello, Ayush Karun!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 27.sp,
-                    ),
+                  Consumer<UserNameProvider>(
+                    builder: (context, userNameProvider, child) {
+                      String userName;
+                      if (userNameProvider.userName != null) {
+                        userName = userNameProvider.userName!;
+                      } else {
+                        userName = 'User';
+                      }
+
+                      return Text(
+                        'Hello, $userName!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 27.sp,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

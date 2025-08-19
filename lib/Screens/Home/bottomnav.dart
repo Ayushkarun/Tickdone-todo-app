@@ -23,14 +23,27 @@ class _BottomnavState extends State<Bottomnav> {
     if (selectedindex == 0) {
       floatbutton = FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Newtask(),));
+          Navigator.push(
+                     context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation, secondaryAnimation) => Newtask(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+          );
         },
         backgroundColor: const Color(0xFF1C0E6F),
-        child: Icon(Icons.add,color: Colors.white,),
+        child: Icon(Icons.add, color: Colors.white),
       );
-    }
-    else{
-      floatbutton=null;
+    } else {
+      floatbutton = null;
     }
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -56,7 +69,7 @@ class _BottomnavState extends State<Bottomnav> {
         ],
       ),
       body: IndexedStack(index: selectedindex, children: widgetoptions),
-       floatingActionButton: floatbutton,
+      floatingActionButton: floatbutton,
     );
   }
 }

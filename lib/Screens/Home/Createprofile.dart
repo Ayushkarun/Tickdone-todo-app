@@ -1,7 +1,9 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Service/Provider/nameprovider.dart';
 import 'bottomnav.dart';
 import 'package:tickdone/Service/Api/api_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,6 +60,9 @@ class _CreateprofileState extends State<Createprofile> {
         }),
       );
       if (response.statusCode == 200) {
+        final Username=Provider.of<UserNameProvider>(context,listen: false);
+        Username.setUserName(userName.text);
+
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
