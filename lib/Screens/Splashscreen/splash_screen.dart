@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:tickdone/Screens/Home/bottomnav.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -56,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
         await prefs.setString('idToken', result['id_token']);
+        await prefs.setString('refreshToken', result['refresh_token']);
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -106,7 +106,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

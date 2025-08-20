@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Service/Provider/nameprovider.dart';
+import 'package:tickdone/Service/Provider/user_provider.dart';
 import 'bottomnav.dart';
 import 'package:tickdone/Service/Api/api_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,7 +23,7 @@ class _CreateprofileState extends State<Createprofile> {
   bool loading = false;
 
   Future<void> saveprofile() async {
-    FocusScope.of(context).unfocus(); 
+    FocusScope.of(context).unfocus();
     bool isValid = formkey.currentState!.validate();
     if (!isValid) {
       return;
@@ -55,13 +55,16 @@ class _CreateprofileState extends State<Createprofile> {
         },
         body: json.encode({
           'fields': {
-            'name': {'stringValue': userName.text},
+            'name': {'stringValue': userName.text.trim()},
           },
         }),
       );
       if (response.statusCode == 200) {
-        final Username=Provider.of<UserNameProvider>(context,listen: false);
-        Username.setUserName(userName.text);
+
+        Provider.of<UserProvider>(
+          context,
+          listen: false,
+        ).setUserName(userName.text.trim());
 
         Navigator.pushReplacement(
           context,

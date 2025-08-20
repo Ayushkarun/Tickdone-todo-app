@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Screens/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tickdone/Service/Provider/nameprovider.dart';
+import 'package:tickdone/Service/Provider/user_provider.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Service/Api/api_service.dart';
@@ -51,7 +51,7 @@ class _AccountState extends State<Account> {
         final data = json.decode(response.body);
         // Find the 'name' field and get its 'stringValue'
         setState(() {
-          _userName = data['fields']['name']['stringValue'];
+          _userName = data['fields']?['name']?['stringValue'] ?? "";
         });
       }
     } catch (e) {
@@ -275,6 +275,201 @@ class _AccountState extends State<Account> {
     );
   }
 
+  void Changeemaildialog() {
+    final TextEditingController newMailController = TextEditingController();
+    final formkey = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.87),
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Colors.white, width: 1),
+            borderRadius: BorderRadius.circular(18.r),
+          ),
+          title: Text(
+            "Change Email",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 20.sp,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Enter Your New Email Address.",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white70,
+                  fontSize: 12.sp,
+                ),
+              ),
+              Form(
+                key: formkey,
+                child: TextFormField(
+                  controller: newMailController,
+                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                  decoration: InputDecoration(
+                    labelText: "New Email",
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                    ),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1C0E6F)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Email cannot be empty';
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1C0E6F),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              ),
+              onPressed: () {
+                if (formkey.currentState!.validate()) {
+                  final newMail = newMailController.text.trim();
+                  changeEmail(newMail);
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text(
+                "Save",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> changeEmail(String newMail) async {
+    final prefs = await SharedPreferences.getInstance();
+    final idToken = prefs.getString('idToken');
+
+    if (idToken == null) {
+      return;
+    }
+
+    final url = Uri.parse(Apiservice.changeEmail);
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'idToken': idToken,
+          'email': newMail,
+          'returnSecureToken': true,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final newIdToken = responseData['idToken'];
+        final newRefreshToken = responseData['refreshToken'];
+
+        await prefs.setString('idToken', newIdToken);
+        await prefs.setString('refreshToken', newRefreshToken);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success!',
+              message: 'Email changed successfully!',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      } else {
+        final errorData = json.decode(response.body);
+        String errorMessage = "An error occurred. Please try again.";
+        if (errorData['error'] != null &&
+            errorData['error']['message'] != null) {
+          errorMessage = errorData['error']['message'];
+        }
+
+        if (errorMessage == "EMAIL_EXISTS") {
+          errorMessage = "This email is already in use by another account.";
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Oh Snap!',
+              message: errorMessage,
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Error!',
+            message:
+                'Something went wrong. Please check your network connection.',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> updateUserName(String newName) async {
     final prefs = await SharedPreferences.getInstance();
     final uid = prefs.getString('userUID');
@@ -298,24 +493,35 @@ class _AccountState extends State<Account> {
     );
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name updated successfully!')),
+        const SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Success',
+            message: 'Name updated successfully!',
+            contentType: ContentType.success,
+          ),
+        ),
       );
-
+      Provider.of<UserProvider>(context, listen: false).setUserName(newName);
       // _fetchUserProfile();
-      final userNameProvider = Provider.of<UserNameProvider>(
-        context,
-        listen: false,
-      );
-    
-      userNameProvider.setUserName(newName);
-
-      setState(() {
-        _userName = newName;
-      });
+      // setState(() {
+      //   _userName = newName;
+      // });
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to update name.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Failed',
+            message: 'Failed to update Name',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
     }
   }
 
@@ -431,21 +637,18 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
+    final userName = Provider.of<UserProvider>(context).userName;
     return Container(
       color: Colors.black,
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           child: Column(
-            // The main Column that organizes the screen
             children: [
-              // This Expanded widget makes the content area fill all available space
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // --- ALL YOUR TOP CONTENT GOES HERE ---
-
                       // Profile card
                       Center(
                         child: SizedBox(
@@ -491,7 +694,7 @@ class _AccountState extends State<Account> {
                                       )
                                     else
                                       Text(
-                                        _userName ?? 'No Name Found',
+                                        userName.isEmpty ? "User" : userName,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -523,9 +726,29 @@ class _AccountState extends State<Account> {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.sp,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       ),
+                      TextButton.icon(
+                        onPressed: () {
+                          return Changeemaildialog();
+                        },
+                        icon: Icon(
+                          Icons.mail,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                        label: Text(
+                          'Change Email',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+
                       TextButton.icon(
                         onPressed: () => showForgotPasswordDialog(),
                         icon: Icon(Icons.key, color: Colors.white, size: 24.sp),
@@ -534,6 +757,7 @@ class _AccountState extends State<Account> {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.sp,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       ),
@@ -562,6 +786,7 @@ class _AccountState extends State<Account> {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.sp,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       ),

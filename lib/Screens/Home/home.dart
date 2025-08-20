@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
-import 'package:tickdone/Service/Provider/nameprovider.dart';
+import 'package:tickdone/Service/Provider/user_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -32,17 +32,15 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Consumer<UserNameProvider>(
-                    builder: (context, userNameProvider, child) {
-                      String userName;
-                      if (userNameProvider.userName != null) {
-                        userName = userNameProvider.userName!;
-                      } else {
-                        userName = 'User';
+                  Consumer<UserProvider>(
+                    builder: (context, userProvider, child) {
+                      String displayName = "User";
+                      if (userProvider.userName.isNotEmpty) {
+                        displayName = userProvider.userName;
                       }
 
                       return Text(
-                        'Hello, $userName!',
+                        'Hello, $displayName!',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Poppins',
