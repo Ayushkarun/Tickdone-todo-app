@@ -2,12 +2,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tickdone/Screens/OnboardingScreens/onboarding_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:tickdone/Services/Provider/user_provider.dart';
+import 'package:tickdone/Views/OnboardingScreens/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Service/Api/api_service.dart';
+import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:tickdone/Screens/Authentication/Login/login.dart';
-import 'package:tickdone/Screens/Home/bottomnav.dart';
+import 'package:tickdone/Views/Authentication/Login/login.dart';
+import 'package:tickdone/Views/Home/bottomnav.dart';
+import 'package:tickdone/Services/Provider/user_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +23,24 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    checkSessionAndNavigate();
+    _initializeUserandNavigate();
+    // checkSessionAndNavigate();
+  }
+
+  Future<void> _initializeUserandNavigate() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // Load username saved locally (SharedPreferences)
+    await userProvider.loadUserNamefromPrefs();
+
+    //Get auth
+    final prefs=await SharedPreferences.getInstance();
+    final uid=prefs.getString('userUID');
+    final idToken=prefs.getString('idToken');
+   // If uid and idToken exist, fetch latest username from Firebase API
+   if(uid != null && idToken != null){
+    await userProvider.fetchUserNameFromApi(uid, idToken);
+   }
+ await checkSessionAndNavigate();
   }
 
   Future<void> checkSessionAndNavigate() async {
@@ -55,7 +75,6 @@ class _SplashScreenState extends State<SplashScreen> {
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
         await prefs.setString('idToken', result['id_token']);
-        await prefs.setString('refreshToken', result['refresh_token']);
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tickdone/Screens/Home/Account.dart';
-import 'package:tickdone/Screens/Home/calender.dart';
-import 'package:tickdone/Screens/Home/home.dart';
+import 'package:tickdone/Views/Home/Account.dart';
+import 'package:tickdone/Views/Home/calender.dart';
+import 'package:tickdone/Views/Home/home.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tickdone/Screens/Task/NewTask.dart';
+import 'package:tickdone/Views/Task/NewTask.dart';
 
 class Bottomnav extends StatefulWidget {
   const Bottomnav({super.key});

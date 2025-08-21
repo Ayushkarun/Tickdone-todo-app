@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:tickdone/Screens/Authentication/Login/login.dart';
-import 'package:tickdone/Service/Api/api_service.dart';
+import 'package:tickdone/Views/Authentication/Login/login.dart';
+import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Screens/Home/Createprofile.dart';
+import 'package:tickdone/Views/Home/Createprofile.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

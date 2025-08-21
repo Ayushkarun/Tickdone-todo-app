@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
-import 'package:tickdone/Screens/Task/Taskdesign.dart';
+import 'package:tickdone/Views/Task/Taskdesign.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});

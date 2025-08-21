@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Service/Provider/user_provider.dart';
+import 'package:tickdone/Services/Provider/user_provider.dart';
 import 'bottomnav.dart';
-import 'package:tickdone/Service/Api/api_service.dart';
+import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 
@@ -61,10 +61,7 @@ class _CreateprofileState extends State<Createprofile> {
       );
       if (response.statusCode == 200) {
 
-        Provider.of<UserProvider>(
-          context,
-          listen: false,
-        ).setUserName(userName.text.trim());
+       Provider.of<UserProvider>(context, listen: false).setUserName(userName.text.trim());
 
         Navigator.pushReplacement(
           context,

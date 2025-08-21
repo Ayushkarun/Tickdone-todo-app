@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
-import 'package:tickdone/Service/Provider/user_provider.dart';
+import 'package:tickdone/Services/Provider/user_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
