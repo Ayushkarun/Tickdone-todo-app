@@ -33,14 +33,14 @@ class _SplashScreenState extends State<SplashScreen> {
     await userProvider.loadUserNamefromPrefs();
 
     //Get auth
-    final prefs=await SharedPreferences.getInstance();
-    final uid=prefs.getString('userUID');
-    final idToken=prefs.getString('idToken');
-   // If uid and idToken exist, fetch latest username from Firebase API
-   if(uid != null && idToken != null){
-    await userProvider.fetchUserNameFromApi(uid, idToken);
-   }
- await checkSessionAndNavigate();
+    final prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('userUID');
+    final idToken = prefs.getString('idToken');
+    // If uid and idToken exist, fetch latest username from Firebase API
+    if (uid != null && idToken != null) {
+      await userProvider.fetchUserNameFromApi(uid, idToken);
+    }
+    await checkSessionAndNavigate();
   }
 
   Future<void> checkSessionAndNavigate() async {

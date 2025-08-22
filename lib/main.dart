@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Views/Splashscreen/splash_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -26,7 +27,8 @@ class Tickdone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider()),
+      ChangeNotifierProvider(create: (context) => DateProvider(),)],
       child: ScreenUtilInit(
         designSize: ScreenUtil.defaultSize,
         builder:
