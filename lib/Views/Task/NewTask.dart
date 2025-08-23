@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+
+// You might need to adjust this import based on your project structure
 import 'package:tickdone/Views/Task/Taskdesign.dart';
 
 class Newtask extends StatefulWidget {
@@ -11,10 +13,95 @@ class Newtask extends StatefulWidget {
 }
 
 class _NewtaskState extends State<Newtask> {
-Time _time = Time(
-  hour: DateTime.now().hour,
-  minute: DateTime.now().minute,
-);
+  // A variable to hold the selected date for a single-day task.
+  DateTime? selectedDate;
+  // A variable to hold the selected time. It starts as null.
+  Time? selectedTime;
+
+  // Variables for a multi-day task (date range).
+  DateTime? startDate;
+  DateTime? endDate;
+
+  // A list of booleans to track which toggle button is selected.
+  // [true, false] means "Single Day" is selected by default.
+  List<bool> isSelected = [true, false];
+
+  // A list of pre-defined categories.
+  final List<String> category = [
+    'Work',
+    'Personal',
+    'Shopping',
+    'Health',
+    'Skill',
+    'Home',
+  ];
+  // A single string to hold the selected category.
+  String? _selectedCategory;
+
+  // --- Functions to Format and Display Data ---
+
+  // Simple function to format a DateTime object into "day-month-year".
+  String formatDate(DateTime date) {
+    return "${date.day}-${date.month}-${date.year}";
+  }
+
+  // Simple function to format a Time object into 12-hour format with AM/PM.
+  String formatTime(Time time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final period = time.period == DayPeriod.am ? "AM" : "PM";
+    return "$hour:${time.minute.toString().padLeft(2, '0')} $period";
+  }
+
+  // A helper function to check if the selected date is today.
+  bool get isToday {
+    if (selectedDate == null) {
+      return false;
+    }
+    final now = DateTime.now();
+    return selectedDate!.year == now.year &&
+           selectedDate!.month == now.month &&
+           selectedDate!.day == now.day;
+  }
+
+  // --- Functions to Handle Pickers ---
+
+  // Shows the single date picker pop-up.
+  void presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    ).then((pickedDate) {
+      if (pickedDate == null) return;
+      
+      setState(() {
+        selectedDate = pickedDate;
+        startDate = null; // Clear date range
+        endDate = null;   // Clear date range
+      });
+    });
+  }
+
+  // Shows the date range picker pop-up.
+  void presentDateRangePicker() async {
+    final pickedDateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDateRange != null) {
+      setState(() {
+        startDate = pickedDateRange.start;
+        endDate = pickedDateRange.end;
+        selectedDate = null; // Clear single date
+        selectedTime = null; // Clear time
+      });
+    }
+  }
+
+  // --- Main Widget Build Method ---
 
   @override
   Widget build(BuildContext context) {
@@ -43,53 +130,213 @@ Time _time = Time(
           SingleChildScrollView(
             child: Form(
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(15.w),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      style: TextStyle(
-                        color: Colors.white, 
+                    Center(
+                      child: ToggleButtons(
+                        fillColor: const Color(0xFF1C0E6F),
+                        isSelected: isSelected,
+                        borderColor: Colors.grey,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomRight: Radius.circular(25),
+                        ),
+                        onPressed: (int index) {
+                          setState(() {
+                            for (int i = 0; i < isSelected.length; i++) {
+                              isSelected[i] = i == index;
+                            }
+                          });
+                          if (index == 0) {
+                            presentDatePicker();
+                          } else {
+                            presentDateRangePicker();
+                          }
+                        },
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Text(
+                              'Single Day',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Text(
+                              'Date Range',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    SizedBox(height: 15.h),
+                    TextFormField(
+                      style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        hintText: 'Enter Title',
+                        labelText: "Title",
                         icon: Icon(Icons.title_rounded),
-                        helperText: 'Title',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
                     ),
                     SizedBox(height: 10.h),
                     TextFormField(
-                      decoration: InputDecoration(hintText: 'Enter Desc'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          showPicker(
-                            context: context,
-                            value: _time,
-                            onChange: (newTime) {
-                              setState(() {
-                                _time = newTime;
-                              });
-                            },
-                            iosStylePicker: true,
-                            is24HrFormat: false,
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "Today (Pick Time)",
-                        style: TextStyle(fontFamily: 'Poppins'),
+                      style: TextStyle(color: Colors.white),
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Description",
+                        icon: Icon(Icons.description),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
                     ),
+                    SizedBox(height: 10.h),
                     Text(
-                      "Selected Time: ${_time.format(context)}",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    
+                      'Select Category',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15.sp,
+                        fontFamily: 'Poppins',
+                      ),
                     ),
-                  ElevatedButton(onPressed: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => CreateTaskPage(),));
-                  }, child: Text('Task'))
+                    SizedBox(height: 5.h),
+                    Wrap(
+                      spacing: 8.w,
+                      runSpacing: 6.h,
+                      children: List.generate(category.length, (index) {
+                        final String current = category[index];
+                        final bool isSelected = _selectedCategory == current;
+
+                        return ChoiceChip(
+                          label: Text(current),
+                          selected: isSelected,
+                          selectedColor: const Color(0xFF1C0E6F),
+                          backgroundColor: Colors.black87,
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                          ),
+                          onSelected: (bool value) {
+                            setState(() {
+                              if (value) {
+                                _selectedCategory = current;
+                              } else {
+                                _selectedCategory = null;
+                              }
+                            });
+                          },
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 10.h),
+                    
+                    // Display the selected date or date range.
+                    if (selectedDate != null && startDate == null && endDate == null)
+                      Text(
+                        "Selected Date: ${formatDate(selectedDate!)}",
+                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                      ),
+                    if (startDate != null && endDate != null)
+                      Text(
+                        "Selected Range: ${formatDate(startDate!)} → ${formatDate(endDate!)}",
+                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                      ),
+                    SizedBox(height: 10.h),
+
+                    // Show the "Pick Time" button ONLY if a single date is selected AND it is today.
+                    if (isToday && startDate == null)
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1C0E6F),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 20.w),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            showPicker(
+                              context: context,
+                              value: selectedTime ??
+                                  Time(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                              onChange: (newTime) {
+                                setState(() {
+                                  selectedTime = newTime;
+                                });
+                              },
+                              iosStylePicker: true,
+                              is24HrFormat: false,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.access_time, color: Colors.white),
+                        label: Text(
+                          "Pick Time (Optional)",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                    // Show selected time ONLY after the user has picked it.
+                    if (selectedTime != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Text(
+                          "Selected Time: ${formatTime(selectedTime!)}",
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: 20.h),
+
+                    Center(
+                      child: SizedBox(
+                        height: 50.h,
+                        width: 0.80.sw,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1C0E6F),
+                          ),
+                          onPressed: () {
+                            // TODO: Add logic to save the task
+                            // You can access all selected values here:
+                            // Title, Description, _selectedCategory, selectedDate/startDate/endDate, selectedTime
+                          },
+                          child: Text(
+                            'Save Task',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

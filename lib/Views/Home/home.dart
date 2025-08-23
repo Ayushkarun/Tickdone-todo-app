@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // A dummy list to simulate having tasks.
-  final List<String> taskList = ['Go to the gym', 'Buy groceries', 'Read a book'];
+  final List<String> taskList = ['Go to the gym', 'Buy groceries', 'Read a book', 'Buy groceries', 'Buy groceries', 'Buy groceries', 'Buy groceries'];
 
   // This function removes a task from the list at a specific position (index).
   void deleteTask(int index) {

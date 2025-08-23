@@ -1,221 +1,271 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:tickdone/Views/Task/Taskdesign.dart'; // Make sure this path is correct
 
-class CreateTaskPage extends StatefulWidget {
-  const CreateTaskPage({super.key});
+class Task extends StatefulWidget {
+  const Task({super.key});
 
   @override
-  State<CreateTaskPage> createState() => _CreateTaskPageState();
+  State<Task> createState() => _TaskState();
 }
 
-class _CreateTaskPageState extends State<CreateTaskPage> {
-  DateTime? selectedDate;
-  TimeOfDay? startTime;
-  TimeOfDay? endTime;
-  String? selectedCategory;
+class _TaskState extends State<Task> {
+  // A variable to hold the selected date for a single-day task. It can be null.
+  DateTime? _selectedDate;
+  // A variable to hold the selected time. It can be null if no time is picked.
+  Time? _selectedTime;
 
-  // Categories
-  final List<String> categories = [
-    "Marketing", "Meeting", "Study", "Sports",
-    "Development", "Family", "Urgent"
-  ];
+  // Variables for a multi-day task (date range). They can be null.
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  // A list of booleans to track which toggle button is selected.
+  // [true, false] means "Select a Single Day" is selected by default.
+  List<bool> _isSelected = [true, false];
+
+  // A list of pre-defined categories. You can add or remove from this list.
+  final List<String> _categories = ['Work', 'Personal', 'Shopping', 'Health', 'Home'];
+  // NEW: A single string to hold the selected category. It can be null.
+  String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // This function is for showing the single date picker.
+  void _presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    ).then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = pickedDate;
+        _startDate = null;
+        _endDate = null;
+      });
+    });
+  }
+
+  // This function is for showing the date range picker.
+  void _presentDateRangePicker() async {
+    final pickedDateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDateRange != null) {
+      setState(() {
+        _startDate = pickedDateRange.start;
+        _endDate = pickedDateRange.end;
+        _selectedDate = null;
+        _selectedTime = null;
+      });
+    }
+  }
+
+  // This function checks if the selected date is today.
+  bool get isToday =>
+      _selectedDate != null &&
+      _selectedDate!.year == DateTime.now().year &&
+      _selectedDate!.month == DateTime.now().month &&
+      _selectedDate!.day == DateTime.now().day;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true, // fixes keyboard issue
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text(
-          "Create New Task",
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 22.sp),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.close, color: Colors.white, size: 28.sp),
         ),
-      ),
-
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Title",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-
-              // Date Picker
-              GestureDetector(
-                onTap: () async {
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    setState(() => selectedDate = picked);
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        selectedDate == null
-                            ? "Select Date"
-                            : "${selectedDate!.toLocal()}".split(' ')[0],
-                        style: TextStyle(fontSize: 16.sp),
-                      ),
-                      Icon(Icons.calendar_today, color: Colors.deepPurple),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-
-              // Start & End Time
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () async {
-                        TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                        if (picked != null) {
-                          setState(() => startTime = picked);
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              startTime == null
-                                  ? "Start Time"
-                                  : startTime!.format(context),
-                              style: TextStyle(fontSize: 16.sp),
-                            ),
-                            Icon(Icons.access_time, color: Colors.deepPurple),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () async {
-                        TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                        if (picked != null) {
-                          setState(() => endTime = picked);
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              endTime == null
-                                  ? "End Time"
-                                  : endTime!.format(context),
-                              style: TextStyle(fontSize: 16.sp),
-                            ),
-                            Icon(Icons.access_time, color: Colors.deepPurple),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-
-              // Description
-              TextFormField(
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-
-              // Category
-              Text("Category", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10.h),
-              Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: categories.map((cat) {
-                  final bool isSelected = selectedCategory == cat;
-                  return ChoiceChip(
-                    label: Text(cat),
-                    selected: isSelected,
-                    onSelected: (value) {
-                      setState(() => selectedCategory = value ? cat : null);
-                    },
-                    selectedColor: Colors.deepPurple,
-                    backgroundColor: Colors.grey.shade300,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 24.h),
-
-              // Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    backgroundColor: Colors.deepPurple,
-                  ),
-                  onPressed: () {},
-                  child: Text("Create Task", style: TextStyle(fontSize: 18.sp)),
-                ),
-              ),
-            ],
+        backgroundColor: const Color(0xFF1C0E6F),
+        title: Text(
+          'Add Task',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Poppins',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Form(
+              child: Padding(
+                padding: EdgeInsets.all(15.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: "Title",
+                        icon: Icon(Icons.title_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    TextFormField(
+                      style: TextStyle(color: Colors.white),
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Description",
+                        icon: Icon(Icons.description),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+
+                    // A title for the category section.
+                    Text(
+                      'Category',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+
+                    // NEW: A Wrap widget with ChoiceChips for single category selection.
+                    Wrap(
+                      spacing: 8.0, // horizontal space between chips
+                      children: _categories.map((category) {
+                        final bool isSelected = _selectedCategory == category;
+                        return ChoiceChip(
+                          label: Text(category),
+                          selected: isSelected,
+                          onSelected: (value) {
+                            setState(() {
+                              _selectedCategory = value ? category : null;
+                            });
+                          },
+                          selectedColor: Colors.purple,
+                          backgroundColor: Colors.grey[800],
+                          labelStyle: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 10.h),
+
+                    // Using a ToggleButtons widget for the selection
+                    ToggleButtons(
+                      isSelected: _isSelected,
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < _isSelected.length; i++) {
+                            _isSelected[i] = i == index;
+                          }
+                          if (_isSelected[0]) {
+                            _presentDatePicker();
+                          } else {
+                            _presentDateRangePicker();
+                          }
+                        });
+                      },
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Text('Single Day', style: TextStyle(color: Colors.white)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Text('Date Range', style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(12.r),
+                      selectedBorderColor: Colors.purple,
+                      selectedColor: Colors.white,
+                      fillColor: Colors.purple,
+                      color: Colors.grey,
+                      borderColor: Colors.grey,
+                      borderWidth: 1,
+                    ),
+                    SizedBox(height: 10.h),
+
+                    // Display the selected dates based on what the user picked
+                    if (_startDate != null && _endDate != null)
+                      Text(
+                        'Task from: ${_startDate!.day}/${_startDate!.month}/${_startDate!.year} to ${_endDate!.day}/${_endDate!.month}/${_endDate!.year}',
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      )
+                    else if (_selectedDate != null)
+                      Text(
+                        'Selected Day: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    SizedBox(height: 10.h),
+
+                    // Show the "Pick Time" button ONLY if a single date is selected AND it is today
+                    if (isToday && _startDate == null)
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            showPicker(
+                              context: context,
+                              value: _selectedTime ?? Time(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                              onChange: (newTime) {
+                                setState(() {
+                                  _selectedTime = newTime;
+                                });
+                              },
+                              iosStylePicker: true,
+                              is24HrFormat: false,
+                            ),
+                          );
+                        },
+                        child: Text("Pick Time (Optional)"),
+                      ),
+                    
+                    // Display the selected time if it exists
+                    if (_selectedTime != null)
+                      Text(
+                        "Selected Time: ${_selectedTime!.format(context)}",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    SizedBox(height: 10.h),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        // The logic for what happens when the user presses 'Task' would go here.
+                        // You can access the selected category with `_selectedCategory`.
+                        // print('Selected category: $_selectedCategory');
+                      },
+                      child: Text('Task'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
