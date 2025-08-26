@@ -1,9 +1,9 @@
+// In NewTask.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
-
-// You might need to adjust this import based on your project structure
-import 'package:tickdone/Views/Task/Taskdesign.dart';
+import 'package:tickdone/Services/Task/Newtaskservice.dart';
+import 'package:intl/intl.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});
@@ -13,6 +13,11 @@ class Newtask extends StatefulWidget {
 }
 
 class _NewtaskState extends State<Newtask> {
+  final taskkey = GlobalKey<FormState>();
+
+  final TextEditingController titlecontroller = TextEditingController();
+  final TextEditingController descriptioncontroller = TextEditingController();
+
   // A variable to hold the selected date for a single-day task.
   DateTime? selectedDate;
   // A variable to hold the selected time. It starts as null.
@@ -24,7 +29,8 @@ class _NewtaskState extends State<Newtask> {
 
   // A list of booleans to track which toggle button is selected.
   // [true, false] means "Single Day" is selected by default.
-  List<bool> isSelected = [true, false];
+  // We'll keep only 'Single Day' active.
+  List<bool> isSelected = [true]; // Changed to a single item list
 
   // A list of pre-defined categories.
   final List<String> category = [
@@ -36,9 +42,7 @@ class _NewtaskState extends State<Newtask> {
     'Home',
   ];
   // A single string to hold the selected category.
-  String? _selectedCategory;
-
-  // --- Functions to Format and Display Data ---
+  String? selectedCategory;
 
   // Simple function to format a DateTime object into "day-month-year".
   String formatDate(DateTime date) {
@@ -59,8 +63,8 @@ class _NewtaskState extends State<Newtask> {
     }
     final now = DateTime.now();
     return selectedDate!.year == now.year &&
-           selectedDate!.month == now.month &&
-           selectedDate!.day == now.day;
+        selectedDate!.month == now.month &&
+        selectedDate!.day == now.day;
   }
 
   // --- Functions to Handle Pickers ---
@@ -74,32 +78,32 @@ class _NewtaskState extends State<Newtask> {
       lastDate: DateTime(2030),
     ).then((pickedDate) {
       if (pickedDate == null) return;
-      
+
       setState(() {
         selectedDate = pickedDate;
         startDate = null; // Clear date range
-        endDate = null;   // Clear date range
+        endDate = null; // Clear date range
       });
     });
   }
 
-  // Shows the date range picker pop-up.
-  void presentDateRangePicker() async {
-    final pickedDateRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2030),
-    );
+  // // Shows the date range picker pop-up.
+  // void presentDateRangePicker() async {
+  //   final pickedDateRange = await showDateRangePicker(
+  //     context: context,
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime(2030),
+  //   );
 
-    if (pickedDateRange != null) {
-      setState(() {
-        startDate = pickedDateRange.start;
-        endDate = pickedDateRange.end;
-        selectedDate = null; // Clear single date
-        selectedTime = null; // Clear time
-      });
-    }
-  }
+  //   if (pickedDateRange != null) {
+  //     setState(() {
+  //       startDate = pickedDateRange.start;
+  //       endDate = pickedDateRange.end;
+  //       selectedDate = null; // Clear single date
+  //       selectedTime = null; // Clear time
+  //     });
+  //   }
+  // }
 
   // --- Main Widget Build Method ---
 
@@ -144,16 +148,13 @@ class _NewtaskState extends State<Newtask> {
                           bottomRight: Radius.circular(25),
                         ),
                         onPressed: (int index) {
-                          setState(() {
-                            for (int i = 0; i < isSelected.length; i++) {
-                              isSelected[i] = i == index;
-                            }
-                          });
+                          // Since we only have one button, we'll only call the single date picker.
                           if (index == 0) {
                             presentDatePicker();
-                          } else {
-                            presentDateRangePicker();
                           }
+                          // else {
+                          //   presentDateRangePicker();
+                          // }
                         },
                         children: <Widget>[
                           Padding(
@@ -167,33 +168,44 @@ class _NewtaskState extends State<Newtask> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            child: Text(
-                              'Date Range',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          //   child: Text(
+                          //     'Date Range',
+                          //     style: TextStyle(
+                          //       color: Colors.white,
+                          //       fontFamily: 'Poppins',
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
                     SizedBox(height: 15.h),
-                    TextFormField(
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: "Title",
-                        icon: Icon(Icons.title_rounded),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                    Form(
+                      key: taskkey,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please Enter Title';
+                          }
+                          return null;
+                        },
+                        controller: titlecontroller,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: "Title",
+                          icon: Icon(Icons.title_rounded),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(height: 10.h),
                     TextFormField(
+                      controller: descriptioncontroller,
                       style: TextStyle(color: Colors.white),
                       maxLines: 3,
                       decoration: InputDecoration(
@@ -220,7 +232,7 @@ class _NewtaskState extends State<Newtask> {
                       runSpacing: 6.h,
                       children: List.generate(category.length, (index) {
                         final String current = category[index];
-                        final bool isSelected = _selectedCategory == current;
+                        final bool isSelected = selectedCategory == current;
 
                         return ChoiceChip(
                           label: Text(current),
@@ -234,9 +246,9 @@ class _NewtaskState extends State<Newtask> {
                           onSelected: (bool value) {
                             setState(() {
                               if (value) {
-                                _selectedCategory = current;
+                                selectedCategory = current;
                               } else {
-                                _selectedCategory = null;
+                                selectedCategory = null;
                               }
                             });
                           },
@@ -244,36 +256,49 @@ class _NewtaskState extends State<Newtask> {
                       }),
                     ),
                     SizedBox(height: 10.h),
-                    
+
                     // Display the selected date or date range.
-                    if (selectedDate != null && startDate == null && endDate == null)
+                    if (selectedDate != null)
                       Text(
                         "Selected Date: ${formatDate(selectedDate!)}",
-                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Colors.white,
+                        ),
                       ),
-                    if (startDate != null && endDate != null)
-                      Text(
-                        "Selected Range: ${formatDate(startDate!)} → ${formatDate(endDate!)}",
-                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
-                      ),
+                    // if (startDate != null && endDate != null)
+                    //   Text(
+                    //     "Selected Range: ${formatDate(startDate!)} → ${formatDate(endDate!)}",
+                    //     style: const TextStyle(
+                    //       fontFamily: 'Poppins',
+                    //       color: Colors.white,
+                    //     ),
+                    //   ),
                     SizedBox(height: 10.h),
 
                     // Show the "Pick Time" button ONLY if a single date is selected AND it is today.
-                    if (isToday && startDate == null)
+                    if (isToday)
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C0E6F),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 20.w),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 12.h,
+                            horizontal: 20.w,
+                          ),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
                             showPicker(
                               context: context,
-                              value: selectedTime ??
-                                  Time(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                              value:
+                                  selectedTime ??
+                                  Time(
+                                    hour: DateTime.now().hour,
+                                    minute: DateTime.now().minute,
+                                  ),
                               onChange: (newTime) {
                                 setState(() {
                                   selectedTime = newTime;
@@ -284,7 +309,10 @@ class _NewtaskState extends State<Newtask> {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.access_time, color: Colors.white),
+                        icon: const Icon(
+                          Icons.access_time,
+                          color: Colors.white,
+                        ),
                         label: Text(
                           "Pick Time (Optional)",
                           style: TextStyle(
@@ -320,10 +348,55 @@ class _NewtaskState extends State<Newtask> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1C0E6F),
                           ),
-                          onPressed: () {
-                            // TODO: Add logic to save the task
-                            // You can access all selected values here:
-                            // Title, Description, _selectedCategory, selectedDate/startDate/endDate, selectedTime
+                          onPressed: () async {
+                            // 1. Check if the form is valid.
+                            if (taskkey.currentState?.validate() ?? false) {
+                              // 2. If the form is valid, then proceed with creating and saving the task.
+                              final taskData = {
+                                'title': {'stringValue': titlecontroller.text},
+                                'description': {
+                                  'stringValue': descriptioncontroller.text,
+                                },
+                                'category': {
+                                  'stringValue': selectedCategory ?? '',
+                                },
+                                'time': {
+                                  'stringValue':
+                                      selectedTime != null
+                                          ? selectedTime!.format(context)
+                                          : '',
+                                },
+                              };
+
+                              // 3. Conditionally add a single date based on user selection.
+                              if (selectedDate != null) {
+                                taskData['date'] = {
+                                  'stringValue': DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(selectedDate!),
+                                };
+                              }
+                              // Commented out the date range logic
+                              // else if (startDate != null && endDate != null && isSelected[1]) {
+                              //   final utcStartDate = DateTime.utc(startDate!.year, startDate!.month, startDate!.day);
+                              //   final utcEndDate = DateTime.utc(endDate!.year, endDate!.month, endDate!.day);
+                              //
+                              //   taskData['startDate'] = {
+                              //     'timestampValue': utcStartDate.toIso8601String(),
+                              //   };
+                              //   taskData['endDate'] = {
+                              //     'timestampValue': utcEndDate.toIso8601String(),
+                              //   };
+                              // }
+
+                              // 4. Call the service to save the task.
+                              final taskService = Addnewtaskservice();
+                              await taskService.addtasktofirebase(
+                                taskData,
+                                context,
+                              );
+                              Navigator.pop(context);
+                            }
                           },
                           child: Text(
                             'Save Task',

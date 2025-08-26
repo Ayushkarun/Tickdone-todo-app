@@ -10,7 +10,7 @@ import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Views/Authentication/Login/login.dart';
 import 'package:tickdone/Views/Home/bottomnav.dart';
-import 'package:tickdone/Services/Provider/user_provider.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

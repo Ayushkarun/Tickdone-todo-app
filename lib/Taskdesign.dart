@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
-import 'package:tickdone/Views/Task/Taskdesign.dart'; // Make sure this path is correct
+import 'package:tickdone/Taskdesign.dart'; // Make sure this path is correct
 
 class Task extends StatefulWidget {
   const Task({super.key});
@@ -188,6 +188,13 @@ class _TaskState extends State<Task> {
                           }
                         });
                       },
+                      borderRadius: BorderRadius.circular(12.r),
+                      selectedBorderColor: Colors.purple,
+                      selectedColor: Colors.white,
+                      fillColor: Colors.purple,
+                      color: Colors.grey,
+                      borderColor: Colors.grey,
+                      borderWidth: 1,
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -198,13 +205,6 @@ class _TaskState extends State<Task> {
                           child: Text('Date Range', style: TextStyle(color: Colors.white)),
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(12.r),
-                      selectedBorderColor: Colors.purple,
-                      selectedColor: Colors.white,
-                      fillColor: Colors.purple,
-                      color: Colors.grey,
-                      borderColor: Colors.grey,
-                      borderWidth: 1,
                     ),
                     SizedBox(height: 10.h),
 
