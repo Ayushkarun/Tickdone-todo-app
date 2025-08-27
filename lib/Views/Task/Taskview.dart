@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tickdone/Views/Task/edittask.dart';
 
 class TaskView extends StatelessWidget {
   final Map task;
@@ -249,7 +250,9 @@ class TaskView extends StatelessWidget {
             // Edit Button
             Center(
               child: TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(taskToEdit: task),));
+                },
                 label: Text(
                   'Edit Task',
                   style: TextStyle(

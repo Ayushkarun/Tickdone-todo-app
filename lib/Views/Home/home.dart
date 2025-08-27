@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
-import 'package:tickdone/Views/Home/Aboutus.dart';
 import 'package:tickdone/Views/Home/Emptytaskpage.dart';
 import 'package:http/http.dart' as http;
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -46,6 +46,8 @@ class _HomeState extends State<Home> {
   }
 
   Future fetchTasksFromFirebase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userUid = prefs.getString('userUID');
     setState(() {
       isLoading = true;
     });
@@ -67,14 +69,29 @@ class _HomeState extends State<Home> {
               {"collectionId": "tasks"},
             ],
             "where": {
-              "fieldFilter": {
-                "field": {"fieldPath": "date"},
-                "op": "EQUAL",
-                "value": {"stringValue": formattedDate},
+              "compositeFilter": {
+                "op": "AND",
+                "filters": [
+                  {
+                    "fieldFilter": {
+                      "field": {"fieldPath": "date"},
+                      "op": "EQUAL",
+                      "value": {"stringValue": formattedDate},
+                    },
+                  },
+                  {
+                    "fieldFilter": {
+                      "field": {"fieldPath": "userId"},
+                      "op": "EQUAL",
+                      "value": {"stringValue": userUid},
+                    },
+                  },
+                ],
               },
             },
           },
         };
+
         //2
         // Post requests for both queries
         final singleDayResponse = await http.post(
@@ -282,8 +299,14 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   child: ListTile(
-                    onTap: (){
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => TaskView(task: taskItem),));
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TaskView(task: taskItem),
+                        ),
+                      );
+                      fetchTasksFromFirebase(); 
                     },
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,

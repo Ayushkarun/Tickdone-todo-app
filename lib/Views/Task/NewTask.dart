@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Services/Task/Newtaskservice.dart';
 import 'package:intl/intl.dart';
 
@@ -87,26 +88,6 @@ class _NewtaskState extends State<Newtask> {
     });
   }
 
-  // // Shows the date range picker pop-up.
-  // void presentDateRangePicker() async {
-  //   final pickedDateRange = await showDateRangePicker(
-  //     context: context,
-  //     firstDate: DateTime.now(),
-  //     lastDate: DateTime(2030),
-  //   );
-
-  //   if (pickedDateRange != null) {
-  //     setState(() {
-  //       startDate = pickedDateRange.start;
-  //       endDate = pickedDateRange.end;
-  //       selectedDate = null; // Clear single date
-  //       selectedTime = null; // Clear time
-  //     });
-  //   }
-  // }
-
-  // --- Main Widget Build Method ---
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,17 +149,6 @@ class _NewtaskState extends State<Newtask> {
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          //   child: Text(
-                          //     'Date Range',
-                          //     style: TextStyle(
-                          //       color: Colors.white,
-                          //       fontFamily: 'Poppins',
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -266,14 +236,7 @@ class _NewtaskState extends State<Newtask> {
                           color: Colors.white,
                         ),
                       ),
-                    // if (startDate != null && endDate != null)
-                    //   Text(
-                    //     "Selected Range: ${formatDate(startDate!)} → ${formatDate(endDate!)}",
-                    //     style: const TextStyle(
-                    //       fontFamily: 'Poppins',
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
+
                     SizedBox(height: 10.h),
 
                     // Show the "Pick Time" button ONLY if a single date is selected AND it is today.
@@ -349,53 +312,49 @@ class _NewtaskState extends State<Newtask> {
                             backgroundColor: const Color(0xFF1C0E6F),
                           ),
                           onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final userUid = prefs.getString('userUID');
                             // 1. Check if the form is valid.
-                            if (taskkey.currentState?.validate() ?? false) {
-                              // 2. If the form is valid, then proceed with creating and saving the task.
-                              final taskData = {
-                                'title': {'stringValue': titlecontroller.text},
-                                'description': {
-                                  'stringValue': descriptioncontroller.text,
-                                },
-                                'category': {
-                                  'stringValue': selectedCategory ?? '',
-                                },
-                                'time': {
-                                  'stringValue':
-                                      selectedTime != null
-                                          ? selectedTime!.format(context)
-                                          : '',
-                                },
-                              };
-
-                              // 3. Conditionally add a single date based on user selection.
-                              if (selectedDate != null) {
-                                taskData['date'] = {
-                                  'stringValue': DateFormat(
-                                    'yyyy-MM-dd',
-                                  ).format(selectedDate!),
+                            if (userUid != null) {
+                              if (taskkey.currentState?.validate() ?? false) {
+                                // 2. If the form is valid, then proceed with creating and saving the task.
+                                final taskData = {
+                                  'title': {
+                                    'stringValue': titlecontroller.text,
+                                  },
+                                  'description': {
+                                    'stringValue': descriptioncontroller.text,
+                                  },
+                                  'category': {
+                                    'stringValue': selectedCategory ?? '',
+                                  },
+                                  'time': {
+                                    'stringValue':
+                                        selectedTime != null
+                                            ? selectedTime!.format(context)
+                                            : '',
+                                  },
+                                  'userId': {'stringValue': userUid},
                                 };
-                              }
-                              // Commented out the date range logic
-                              // else if (startDate != null && endDate != null && isSelected[1]) {
-                              //   final utcStartDate = DateTime.utc(startDate!.year, startDate!.month, startDate!.day);
-                              //   final utcEndDate = DateTime.utc(endDate!.year, endDate!.month, endDate!.day);
-                              //
-                              //   taskData['startDate'] = {
-                              //     'timestampValue': utcStartDate.toIso8601String(),
-                              //   };
-                              //   taskData['endDate'] = {
-                              //     'timestampValue': utcEndDate.toIso8601String(),
-                              //   };
-                              // }
 
-                              // 4. Call the service to save the task.
-                              final taskService = Addnewtaskservice();
-                              await taskService.addtasktofirebase(
-                                taskData,
-                                context,
-                              );
-                              Navigator.pop(context);
+                                // 3. Conditionally add a single date based on user selection.
+                                if (selectedDate != null) {
+                                  taskData['date'] = {
+                                    'stringValue': DateFormat(
+                                      'yyyy-MM-dd',
+                                    ).format(selectedDate!),
+                                  };
+                                }
+
+                                // 4. Call the service to save the task.
+                                final taskService = Addnewtaskservice();
+                                await taskService.addtasktofirebase(
+                                  taskData,
+                                  context,
+                                  userUid!,
+                                );
+                                Navigator.pop(context);
+                              }
                             }
                           },
                           child: Text(

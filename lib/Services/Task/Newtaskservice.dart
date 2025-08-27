@@ -9,9 +9,10 @@ class Addnewtaskservice {
   Future<void> addtasktofirebase(
     Map<String, dynamic> taskdata,
     BuildContext context,
+    String userId,
   ) async {
     try {
-      // ✅ Fix date: Handle single date
+    
       if (taskdata.containsKey("date")) {
         final dateValue = taskdata["date"];
         if (dateValue is String && dateValue.isNotEmpty) {
@@ -19,27 +20,7 @@ class Addnewtaskservice {
           taskdata["date"] = {"timestampValue": parsedDate.toIso8601String()};
         }
       }
-
-      // ✅ Fix date range: Handle startDate & endDate
-      // if (taskdata.containsKey("startDate")) {
-      //   final startValue = taskdata["startDate"];
-      //   if (startValue is String && startValue.isNotEmpty) {
-      //     final parsedStart = DateTime.parse(startValue).toUtc();
-      //     taskdata["startDate"] = {
-      //       "timestampValue": parsedStart.toIso8601String()
-      //     };
-      //   }
-      // }
-
-      // if (taskdata.containsKey("endDate")) {
-      //   final endValue = taskdata["endDate"];
-      //   if (endValue is String && endValue.isNotEmpty) {
-      //     final parsedEnd = DateTime.parse(endValue).toUtc();
-      //     taskdata["endDate"] = {"timestampValue": parsedEnd.toIso8601String()};
-      //   }
-      // }
-
-      // 🔥 Send to Firestore REST API
+      taskdata['userId'] = {'stringValue': userId};
       final url = Uri.parse(Apiservice.task);
       final response = await http.post(
         url,
