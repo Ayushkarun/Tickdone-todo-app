@@ -20,7 +20,7 @@ class _BottomnavState extends State<Bottomnav> {
   @override
   Widget build(BuildContext context) {
     Widget? floatbutton;
-    if (selectedindex == 0) {
+    if (selectedindex == 0||selectedindex == 1) {
       floatbutton = FloatingActionButton(
       
         onPressed: () {

@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<Map<String, dynamic>> task = []; // To store fetched tasks
   bool isLoading = true;
 
@@ -183,8 +183,22 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     fetchTasksFromFirebase();
   }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Stop observing
+    super.dispose();
+  }
+
+  @override
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  if (state == AppLifecycleState.resumed) {
+    fetchTasksFromFirebase();
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -299,14 +313,14 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   child: ListTile(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => TaskView(task: taskItem),
                         ),
                       );
-                      fetchTasksFromFirebase(); 
+                      fetchTasksFromFirebase();
                     },
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
