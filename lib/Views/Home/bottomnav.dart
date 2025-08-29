@@ -20,24 +20,23 @@ class _BottomnavState extends State<Bottomnav> {
   @override
   Widget build(BuildContext context) {
     Widget? floatbutton;
-    if (selectedindex == 0||selectedindex == 1) {
+    if (selectedindex == 0 || selectedindex == 1) {
       floatbutton = FloatingActionButton(
-      
         onPressed: () {
           Navigator.push(
-                     context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) => Newtask(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+            context,
+            PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) => Newtask(),
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            ),
           );
         },
         backgroundColor: const Color(0xFF1C0E6F),

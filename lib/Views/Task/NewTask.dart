@@ -88,6 +88,27 @@ class _NewtaskState extends State<Newtask> {
     });
   }
 
+//   Future<void> presentDatePicker() async {
+//   DateTime initial = DateTime.now();
+//   if (selectedDate != null) {
+//     initial = selectedDate!;
+//   }
+
+//   final pickedDate = await showDatePicker(
+//     context: context,
+//     initialDate: initial,
+//     firstDate: DateTime.now(),
+//     lastDate: DateTime(2030),
+//   );
+
+//   if (pickedDate == null) return;
+
+//   setState(() {
+//     selectedDate = pickedDate;
+//   });
+// }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
