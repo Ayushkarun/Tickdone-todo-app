@@ -21,7 +21,7 @@ class Emptytask extends StatelessWidget {
             'You have no tasks for today!',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18.sp,
+              fontSize: 15.sp,
               fontFamily: 'Poppins',
             ),
           ),
@@ -30,7 +30,7 @@ class Emptytask extends StatelessWidget {
             'Add a new task using the + button.',
             style: TextStyle(
               color: Colors.grey,
-              fontSize: 14.sp,
+              fontSize: 12.sp,
               fontFamily: 'Poppins',
             ),
           ),

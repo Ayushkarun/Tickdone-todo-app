@@ -1,10 +1,14 @@
 import 'dart:convert';
-
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:tickdone/Services/Provider/date_provider.dart';
+import 'package:tickdone/Views/Home/Emptytaskpage.dart';
+import 'package:tickdone/Views/Task/Taskview.dart';
 import 'package:tickdone/calendertask/taskadd.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
@@ -67,31 +71,235 @@ class _CalenderState extends State<Calender> {
       );
       task.clear();
 
-      if(singleDayResponse.statusCode==200){
-        final List singleDayData=json.decode(singleDayResponse.body);
-        for(var item in singleDayData){
-          if(item.containsKey('document')){
-            final doc=item['document'];
+      if (singleDayResponse.statusCode == 200) {
+        final List singleDayData = json.decode(singleDayResponse.body);
+        for (var item in singleDayData) {
+          if (item.containsKey('document')) {
+            final doc = item['document'];
+            final taskId = doc['name'].split('/').last;
+            task.add({'id': taskId, 'fields': doc['fields']});
           }
         }
       }
-    }
-    
-     catch (e) {
-
+    } catch (e) {
+      print("Error fetching task:$e");
+      task.clear();
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
+  Future<void> deleteTask(String taskId) async {
+    try {
+      final url = Uri.parse(
+        '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}',
+      );
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            behavior: SnackBarBehavior.floating,
+            content: AwesomeSnackbarContent(
+              title: 'Success!',
+              message: 'Task deleted successfully!',
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+        // After deleting, we re-fetch the tasks for the current date.
+        fetchTaskfromfirebase(today);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            behavior: SnackBarBehavior.floating,
+            content: AwesomeSnackbarContent(
+              title: 'Oh Snap!',
+              message: 'Failed to delete task. Please try again.',
+              contentType: ContentType.failure,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          content: AwesomeSnackbarContent(
+            title: 'Oh Snap!',
+            message: 'An error occurred while deleting the task: $e',
+            contentType: ContentType.failure,
+          ),
+        ),
+      );
+    }
+  }
+    Color getCategoryColor(String category) {
+      switch (category.toLowerCase()) {
+        case 'work':
+          return Colors.blue;
+        case 'personal':
+          return Colors.green;
+        case 'shopping':
+          return Colors.orange;
+        case 'health':
+          return Colors.red;
+        case 'skill':
+          return Colors.purple;
+        case 'home':
+          return Colors.brown;
+        default:
+          return Colors.grey; 
+      }
+    }
   void onDayselect(DateTime day, DateTime focusedDay) {
     setState(() {
       today = day;
     });
+    // Tell the DateProvider about the new selected date.
+    Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
+    // Fetch the tasks for this new date.
+    fetchTaskfromfirebase(day);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // When the calendar page first loads, fetch tasks for today's date.
+    fetchTaskfromfirebase(today);
   }
 
   @override
   Widget build(BuildContext context) {
     String dayname = DateFormat("EEE").format(today);
     String datemonth = DateFormat("d MMMM").format(today);
+
+    Widget mainContent;
+
+    if (isLoading) {
+      mainContent = Center(child: CircularProgressIndicator());
+    } else if (task.isEmpty) {
+      mainContent = Emptytask();
+    } else {
+      mainContent = Expanded(
+        child: ListView.builder(
+          itemCount: task.length,
+          itemBuilder: (context, index) {
+            final taskItem = task[index];
+            final taskId = taskItem['id'];
+            final title = taskItem['fields']['title']['stringValue'];
+            final description =
+                taskItem['fields']['description']['stringValue'];
+            final category = taskItem['fields']['category']['stringValue'];
+            final time = taskItem['fields']['time']['stringValue'];
+
+            return Card(
+              color: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.r),
+                side: const BorderSide(color: Color(0xFF1C0E6F), width: 1.5),
+              ),
+              child: ListTile(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TaskView(task: taskItem),
+                    ),
+                  );
+                  // After returning from the TaskView, refresh the tasks
+                  fetchTaskfromfirebase(today);
+                },
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 5.h,
+                ),
+                tileColor: Colors.transparent,
+                title: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.sp,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: 'Poppins',
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                    SizedBox(height: 8.h,),
+                    Wrap(
+                      spacing: 8.w,
+                      runSpacing: 8.h,
+                      children: [
+                        if(category.isNotEmpty)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: getCategoryColor(category),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Text(category,
+                          style: TextStyle(
+                             color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                          ),),
+                        ),
+                        if(time.isNotEmpty)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 5.w,
+                            vertical: 4.h
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Text(
+                            'Due:$time',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+
+                      ],
+                    )
+                  ],
+                ),
+                trailing: IconButton(onPressed: (){
+                  deleteTask(taskId);
+                }, icon: Icon(Icons.delete, color: Colors.red[400])),
+              ),
+            );
+          },
+        ),
+      );
+    }
 
     return Container(
       color: Colors.black,
@@ -166,15 +374,8 @@ class _CalenderState extends State<Calender> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Taskadder()),
-                );
-              },
-              child: Text('Task'),
-            ),
+            SizedBox(),
+            mainContent,
           ],
         ),
       ),
