@@ -1,19 +1,20 @@
 // In home.dart
-import 'dart:convert';
+// import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Services/Api/api_service.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Views/Home/Emptytaskpage.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
+import 'package:tickdone/Services/Provider/task_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,8 +24,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
-  List<Map<String, dynamic>> task = []; // To store fetched tasks
-  bool isLoading = true;
+  // List<Map<String, dynamic>> task = []; // To store fetched tasks
+  // bool isLoading = true;
 
   Color getCategoryColor(String category) {
     switch (category.toLowerCase()) {
@@ -45,146 +46,152 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     }
   }
 
-  Future fetchTasksFromFirebase() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userUid = prefs.getString('userUID');
-    setState(() {
-      isLoading = true;
-    });
+  // Future fetchTasksFromFirebase() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userUid = prefs.getString('userUID');
+  //   setState(() {
+  //     isLoading = true;
+  //   });
 
-    try {
-      final selectedDate =
-          Provider.of<DateProvider>(context, listen: false).selectedDate;
+  //   try {
+  //     final selectedDate =
+  //         Provider.of<DateProvider>(context, listen: false).selectedDate;
 
-      if (selectedDate != null) {
-        final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-        //1
-        final url = Uri.parse(
-          '${Apiservice.firestoreBaseUrl}:runQuery?key=${Apiservice.apiKey}',
-        );
+  //     if (selectedDate != null) {
+  //       final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+  //       //1
+  //       final url = Uri.parse(
+  //         '${Apiservice.firestoreBaseUrl}:runQuery?key=${Apiservice.apiKey}',
+  //       );
 
-        final singleDayQueryBody = {
-          "structuredQuery": {
-            "from": [
-              {"collectionId": "tasks"},
-            ],
-            "where": {
-              "compositeFilter": {
-                "op": "AND",
-                "filters": [
-                  {
-                    "fieldFilter": {
-                      "field": {"fieldPath": "date"},
-                      "op": "EQUAL",
-                      "value": {"stringValue": formattedDate},
-                    },
-                  },
-                  {
-                    "fieldFilter": {
-                      "field": {"fieldPath": "userId"},
-                      "op": "EQUAL",
-                      "value": {"stringValue": userUid},
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        };
+  //       final singleDayQueryBody = {
+  //         "structuredQuery": {
+  //           "from": [
+  //             {"collectionId": "tasks"},
+  //           ],
+  //           "where": {
+  //             "compositeFilter": {
+  //               "op": "AND",
+  //               "filters": [
+  //                 {
+  //                   "fieldFilter": {
+  //                     "field": {"fieldPath": "date"},
+  //                     "op": "EQUAL",
+  //                     "value": {"stringValue": formattedDate},
+  //                   },
+  //                 },
+  //                 {
+  //                   "fieldFilter": {
+  //                     "field": {"fieldPath": "userId"},
+  //                     "op": "EQUAL",
+  //                     "value": {"stringValue": userUid},
+  //                   },
+  //                 },
+  //               ],
+  //             },
+  //           },
+  //         },
+  //       };
 
-        //2
-        // Post requests for both queries
-        final singleDayResponse = await http.post(
-          url,
-          headers: {"Content-Type": "application/json"},
-          body: json.encode(singleDayQueryBody),
-        );
+  //       //2
+  //       // Post requests for both queries
+  //       final singleDayResponse = await http.post(
+  //         url,
+  //         headers: {"Content-Type": "application/json"},
+  //         body: json.encode(singleDayQueryBody),
+  //       );
 
-        //3
+  //       //3
 
-        task.clear();
+  //       task.clear();
 
-        if (singleDayResponse.statusCode == 200) {
-          final List singleDayData = json.decode(singleDayResponse.body);
-          for (var item in singleDayData) {
-            if (item.containsKey('document')) {
-              final doc = item['document'];
-              final taskId = doc['name'].split('/').last;
-              task.add({'id': taskId, 'fields': doc['fields']});
-            }
-          }
-        }
+  //       if (singleDayResponse.statusCode == 200) {
+  //         final List singleDayData = json.decode(singleDayResponse.body);
+  //         for (var item in singleDayData) {
+  //           if (item.containsKey('document')) {
+  //             final doc = item['document'];
+  //             final taskId = doc['name'].split('/').last;
+  //             task.add({'id': taskId, 'fields': doc['fields']});
+  //           }
+  //         }
+  //       }
 
-        ///4
-      } else {
-        task.clear();
-      }
-    } catch (e) {
-      print("Error fetching tasks: $e");
-      task.clear();
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  //       ///4
+  //     } else {
+  //       task.clear();
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching tasks: $e");
+  //     task.clear();
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> deleteTask(String taskId) async {
-    try {
-      final url = Uri.parse(
-        '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}',
-      );
-      final response = await http.delete(url);
+  // Future<void> deleteTask(String taskId) async {
+  //   try {
+  //     final url = Uri.parse(
+  //       '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}',
+  //     );
+  //     final response = await http.delete(url);
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'Success!',
-              message: 'Task deleted successfully!',
-              contentType: ContentType.success,
-            ),
-          ),
-        );
-        await fetchTasksFromFirebase();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'Oh Snap!',
-              message: 'Failed to delete task. Please try again.',
-              contentType: ContentType.failure,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-          content: AwesomeSnackbarContent(
-            title: 'Oh Snap!',
-            message: 'An error occurred while deleting the task: $e',
-            contentType: ContentType.failure,
-          ),
-        ),
-      );
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           elevation: 0,
+  //           backgroundColor: Colors.transparent,
+  //           behavior: SnackBarBehavior.floating,
+  //           content: AwesomeSnackbarContent(
+  //             title: 'Success!',
+  //             message: 'Task deleted successfully!',
+  //             contentType: ContentType.success,
+  //           ),
+  //         ),
+  //       );
+  //       await fetchTasksFromFirebase();
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           elevation: 0,
+  //           backgroundColor: Colors.transparent,
+  //           behavior: SnackBarBehavior.floating,
+  //           content: AwesomeSnackbarContent(
+  //             title: 'Oh Snap!',
+  //             message: 'Failed to delete task. Please try again.',
+  //             contentType: ContentType.failure,
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         elevation: 0,
+  //         backgroundColor: Colors.transparent,
+  //         behavior: SnackBarBehavior.floating,
+  //         content: AwesomeSnackbarContent(
+  //           title: 'Oh Snap!',
+  //           message: 'An error occurred while deleting the task: $e',
+  //           contentType: ContentType.failure,
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    fetchTasksFromFirebase();
+    // fetchTasksFromFirebase();
+    // Use addPostFrameCallback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
+    });
   }
 
   @override
@@ -194,14 +201,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   @override
-void didChangeAppLifecycleState(AppLifecycleState state) {
-  if (state == AppLifecycleState.resumed) {
-    fetchTasksFromFirebase();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // fetchTasksFromFirebase();
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = context.watch<TaskProvider>();
+    final dateProvider = context.watch<DateProvider>();
+    // This is now managed by the provider
+    final isLoading = taskProvider.isLoading;
+    final task = taskProvider.tasks;
+
     Widget mainContent;
 
     if (isLoading) {
@@ -320,7 +336,10 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                           builder: (context) => TaskView(task: taskItem),
                         ),
                       );
-                      fetchTasksFromFirebase();
+                      taskProvider.fetchTasksFromFirebase(
+                        dateProvider.selectedDate,
+                      );
+                      // fetchTasksFromFirebase();
                     },
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -397,8 +416,37 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                     ),
                     trailing: IconButton(
                       icon: Icon(Icons.delete, color: Colors.red[400]),
-                      onPressed: () {
-                        deleteTask(taskId);
+                      onPressed: () async {
+                        // deleteTask(taskId);
+                        final success = await taskProvider.deleteTask(taskId);
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              behavior: SnackBarBehavior.floating,
+                              content: AwesomeSnackbarContent(
+                                title: 'Success!',
+                                message: 'Task deleted successfully!',
+                                contentType: ContentType.success,
+                              ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              behavior: SnackBarBehavior.floating,
+                              content: AwesomeSnackbarContent(
+                                title: 'Oh Snap!',
+                                message:
+                                    'Failed to delete task. Please try again.',
+                                contentType: ContentType.failure,
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -477,7 +525,8 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
                       context,
                       listen: false,
                     ).setSelectedDate(date);
-                    fetchTasksFromFirebase();
+                    // fetchTasksFromFirebase();
+                     taskProvider.fetchTasksFromFirebase(date);
                   },
                 ),
               ),

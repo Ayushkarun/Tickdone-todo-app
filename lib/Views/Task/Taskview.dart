@@ -3,17 +3,22 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Views/Task/edittask.dart';
 
-class TaskView extends StatelessWidget {
+class TaskView extends StatefulWidget {
   final Map task;
   const TaskView({super.key, required this.task});
 
+  @override
+  State<TaskView> createState() => _TaskViewState();
+}
+
+class _TaskViewState extends State<TaskView> {
   @override
   Widget build(BuildContext context) {
     // These are your specified colors
     const backgroundColor = Color(0xFF1C0E6F);
     const cardColor = Colors.black;
 
-    final fields = task['fields'];
+    final fields = widget.task['fields'];
     final title = fields['title']?['stringValue'] ?? 'No Title';
     final description =
         fields['description']?['stringValue'] ?? 'No Description';
@@ -251,7 +256,7 @@ class TaskView extends StatelessWidget {
             Center(
               child: TextButton.icon(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(taskToEdit: task),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(taskToEdit: widget.task),));
                 },
                 label: Text(
                   'Edit Task',

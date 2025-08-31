@@ -7,6 +7,9 @@ import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+// import 'package:provider/provider.dart';
+// import 'package:tickdone/Services/Provider/task_provider.dart';
+// import 'package:tickdone/Services/Provider/date_provider.dart';
 
 class EditTask extends StatefulWidget {
   final Map taskToEdit;
@@ -65,30 +68,37 @@ class _EditTaskState extends State<EditTask> {
         }
       }
     }
-    
-    if (timeData != null && timeData.containsKey('stringValue') && timeData['stringValue'].isNotEmpty) {
+
+    if (timeData != null &&
+        timeData.containsKey('stringValue') &&
+        timeData['stringValue'].isNotEmpty) {
       try {
         final timeString = timeData['stringValue'];
-        final format = DateFormat('h:mm a'); 
+        final format = DateFormat('h:mm a');
         final dateTime = format.parse(timeString);
         selectedTime = Time(hour: dateTime.hour, minute: dateTime.minute);
       } catch (e) {
         selectedTime = null;
       }
     }
-
   }
 
   String formatDate(DateTime date) {
     return "${date.day}-${date.month}-${date.year}";
   }
-  
+
   String formatTime(Time time) {
     final now = DateTime.now();
-    final formattedTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final formattedTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     return DateFormat.jm().format(formattedTime);
   }
-  
+
   bool get isToday {
     if (selectedDate == null) {
       return false;
@@ -98,7 +108,7 @@ class _EditTaskState extends State<EditTask> {
         selectedDate!.month == now.month &&
         selectedDate!.day == now.day;
   }
-  
+
   void presentDatePicker() {
     showDatePicker(
       context: context,
@@ -112,12 +122,12 @@ class _EditTaskState extends State<EditTask> {
       });
     });
   }
-  
+
   Future<void> updateTaskInFirebase() async {
     try {
       final taskId = widget.taskToEdit['id'];
       final originalFields = widget.taskToEdit['fields'];
-      final userId = originalFields['userId']?['stringValue'] ?? ''; 
+      final userId = originalFields['userId']?['stringValue'] ?? '';
 
       final url = Uri.parse(
         '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}',
@@ -130,7 +140,7 @@ class _EditTaskState extends State<EditTask> {
         'time': {
           'stringValue': selectedTime != null ? formatTime(selectedTime!) : '',
         },
-        'userId': {'stringValue': userId}, 
+        'userId': {'stringValue': userId},
       };
 
       if (selectedDate != null) {
@@ -161,6 +171,7 @@ class _EditTaskState extends State<EditTask> {
               ),
             ),
           );
+          Navigator.pop(context);
           Navigator.pop(context);
         }
       } else {
@@ -286,29 +297,29 @@ class _EditTaskState extends State<EditTask> {
                     Wrap(
                       spacing: 8.w,
                       runSpacing: 6.h,
-                      children: category
-                          .map((String current) {
-                        final bool isSelected = selectedCategory == current;
-                        return ChoiceChip(
-                          label: Text(current),
-                          selected: isSelected,
-                          selectedColor: const Color(0xFF1C0E6F),
-                          backgroundColor: Colors.black87,
-                          labelStyle: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                          ),
-                          onSelected: (bool value) {
-                            setState(() {
-                              if (value) {
-                                selectedCategory = current;
-                              } else {
-                                selectedCategory = null;
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
+                      children:
+                          category.map((String current) {
+                            final bool isSelected = selectedCategory == current;
+                            return ChoiceChip(
+                              label: Text(current),
+                              selected: isSelected,
+                              selectedColor: const Color(0xFF1C0E6F),
+                              backgroundColor: Colors.black87,
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Poppins',
+                              ),
+                              onSelected: (bool value) {
+                                setState(() {
+                                  if (value) {
+                                    selectedCategory = current;
+                                  } else {
+                                    selectedCategory = null;
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
                     ),
                     SizedBox(height: 10.h),
                     if (isToday)
@@ -327,7 +338,8 @@ class _EditTaskState extends State<EditTask> {
                           Navigator.of(context).push(
                             showPicker(
                               context: context,
-                              value: selectedTime ??
+                              value:
+                                  selectedTime ??
                                   Time(
                                     hour: DateTime.now().hour,
                                     minute: DateTime.now().minute,
