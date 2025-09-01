@@ -4,6 +4,9 @@ import 'package:tickdone/Views/Home/calender.dart';
 import 'package:tickdone/Views/Home/home.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Views/Task/NewTask.dart';
+import 'package:provider/provider.dart';
+import 'package:tickdone/Services/Provider/date_provider.dart';
+import 'package:tickdone/Services/Provider/task_provider.dart';
 
 class Bottomnav extends StatefulWidget {
   const Bottomnav({super.key});
@@ -20,6 +23,22 @@ class _BottomnavState extends State<Bottomnav> {
   @override
   Widget build(BuildContext context) {
     Widget? floatbutton;
+    void onTabTapped(int index) {
+      if (selectedindex == 1 && index == 0) {
+        final dateProvider = context.read<DateProvider>();
+        final taskProvider = context.read<TaskProvider>();
+        final today = DateTime.now();
+
+        // Set selected date to today
+        dateProvider.setSelectedDate(today);
+
+        // Fetch today's tasks for Home screen
+        taskProvider.fetchTasksFromFirebase(today);
+      }
+      setState(() {
+        selectedindex = index;
+      });
+    }
     if (selectedindex == 0 || selectedindex == 1) {
       floatbutton = FloatingActionButton(
         onPressed: () {
@@ -49,11 +68,7 @@ class _BottomnavState extends State<Bottomnav> {
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedindex,
-        onTap: (int index) {
-          setState(() {
-            selectedindex = index;
-          });
-        },
+        onTap:onTabTapped,
         backgroundColor: Colors.black,
         elevation: 0,
         type: BottomNavigationBarType.fixed,

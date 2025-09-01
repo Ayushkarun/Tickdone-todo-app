@@ -15,6 +15,9 @@ class TaskProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> fetchTasksFromFirebase(DateTime selectedDate) async {
+      if (_isLoading) {
+    return;
+  }
     _isLoading = true;
     notifyListeners();
 

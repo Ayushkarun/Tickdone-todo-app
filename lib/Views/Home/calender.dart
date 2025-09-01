@@ -161,19 +161,28 @@ class _CalenderState extends State<Calender> {
     }
   }
 
-  void onDayselect(DateTime day, DateTime focusedDay) {
-    setState(() {
-      today = day;
-    });
-    // Tell the DateProvider about the new selected date.
+    void onDayselect(DateTime day, DateTime focusedDay) {
+    // You no longer need setState here since the provider handles the state change
     Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
-    // Fetch the tasks for this new date.
-    // fetchTaskfromfirebase(day);
     Provider.of<TaskProvider>(
       context,
       listen: false,
     ).fetchTasksFromFirebase(day);
   }
+
+  // void onDayselect(DateTime day, DateTime focusedDay) {
+  //   setState(() {
+  //     today = day;
+  //   });
+  //   // Tell the DateProvider about the new selected date.
+  //   Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
+  //   // Fetch the tasks for this new date.
+  //   // fetchTaskfromfirebase(day);
+  //   Provider.of<TaskProvider>(
+  //     context,
+  //     listen: false,
+  //   ).fetchTasksFromFirebase(day);
+  // }
 
   @override
   void initState() {
@@ -190,11 +199,13 @@ class _CalenderState extends State<Calender> {
 
   @override
   Widget build(BuildContext context) {
+      final dateProvider = context.watch<DateProvider>(); // Watch the provider
+  final selectedDate = dateProvider.selectedDate; // Get the selected date
     final taskProvider = context.watch<TaskProvider>();
     final isLoading = taskProvider.isLoading;
     final tasks = taskProvider.tasks;
-    String dayname = DateFormat("EEE").format(today);
-    String datemonth = DateFormat("d MMMM").format(today);
+    String dayname = DateFormat("EEE").format(selectedDate);
+    String datemonth = DateFormat("d MMMM").format(selectedDate);
 
     Widget mainContent;
 
@@ -379,9 +390,9 @@ class _CalenderState extends State<Calender> {
                     ),
                   ),
                   availableGestures: AvailableGestures.all,
-                  selectedDayPredicate: (day) => isSameDay(day, today),
+                  selectedDayPredicate: (day) => isSameDay(day, selectedDate),
                   rowHeight: 42.h,
-                  focusedDay: today,
+                  focusedDay: selectedDate,
                   calendarStyle: CalendarStyle(
                     defaultTextStyle: TextStyle(
                       color: Colors.white,
