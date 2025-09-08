@@ -14,10 +14,47 @@ class TaskProvider extends ChangeNotifier {
   List<Map<String, dynamic>> get tasks => _tasks;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchTasksFromFirebase(DateTime selectedDate) async {
-      if (_isLoading) {
-    return;
+  Future<bool> updateTaskstatus(String taskId, bool isCompleted) async {
+    try {
+      final taskIndex = _tasks.indexWhere((task) => task['id'] == taskId);
+      if (taskIndex == -1) return false;
+
+      final currentTask = _tasks[taskIndex];
+      final existingDate = currentTask['fields']['date']?['stringValue'];
+      final url = Uri.parse(
+        '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}&updateMask.fieldPaths=isCompleted',
+      );
+      final response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "fields": {
+            "isCompleted": {"booleanValue": isCompleted},
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _tasks[taskIndex]['fields']['isCompleted'] = {
+          'booleanValue': isCompleted,
+        };
+        notifyListeners();
+
+        return true;
+      } else {
+        print('Failed to update task status: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error updating task status: $e');
+      return false;
+    }
   }
+
+  Future<void> fetchTasksFromFirebase(DateTime selectedDate) async {
+    if (_isLoading) {
+      return;
+    }
     _isLoading = true;
     notifyListeners();
 
@@ -75,6 +112,19 @@ class TaskProvider extends ChangeNotifier {
           if (item.containsKey('document')) {
             final doc = item['document'];
             final taskId = doc['name'].split('/').last;
+            final fields = doc['fields'];
+            if (fields['date'] != null) {
+              if (fields['date'].containsKey('timestampValue')) {
+                final parsedDate = DateTime.parse(
+                  fields['date']['timestampValue'],
+                );
+                fields['date'] = {
+                  "stringValue": DateFormat(
+                    'yyyy-MM-dd',
+                  ).format(parsedDate.toLocal()),
+                };
+              }
+            }
             _tasks.add({'id': taskId, 'fields': doc['fields']});
           }
         }

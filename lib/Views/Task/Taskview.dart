@@ -154,7 +154,6 @@ class _TaskViewState extends State<TaskView> {
               ),
             ),
             SizedBox(height: 12.h),
-
             // Time Card
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -200,7 +199,6 @@ class _TaskViewState extends State<TaskView> {
               ),
             ),
             SizedBox(height: 12.h),
-
             // Date Card
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -249,14 +247,17 @@ class _TaskViewState extends State<TaskView> {
                 ],
               ),
             ),
-
             SizedBox(height: 48.h),
-
             // Edit Button
             Center(
               child: TextButton.icon(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditTask(taskToEdit: widget.task),));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditTask(taskToEdit: widget.task),
+                    ),
+                  );
                 },
                 label: Text(
                   'Edit Task',
@@ -267,8 +268,7 @@ class _TaskViewState extends State<TaskView> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                icon: Icon(Icons.edit,color: Colors.white,size: 25.h,),
-                
+                icon: Icon(Icons.edit, color: Colors.white, size: 25.h),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 // In Newtaskservice.dart
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Services/Api/api_service.dart';
@@ -16,8 +17,10 @@ class Addnewtaskservice {
       if (taskdata.containsKey("date")) {
         final dateValue = taskdata["date"];
         if (dateValue is String && dateValue.isNotEmpty) {
-          final parsedDate = DateTime.parse(dateValue).toUtc();
-          taskdata["date"] = {"timestampValue": parsedDate.toIso8601String()};
+    final formattedDate = DateTime.parse(dateValue);
+    taskdata["date"] = {
+      "stringValue": DateFormat('yyyy-MM-dd').format(formattedDate)
+    };
         }
       }
       taskdata['userId'] = {'stringValue': userId};

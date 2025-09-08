@@ -88,26 +88,25 @@ class _NewtaskState extends State<Newtask> {
     });
   }
 
-//   Future<void> presentDatePicker() async {
-//   DateTime initial = DateTime.now();
-//   if (selectedDate != null) {
-//     initial = selectedDate!;
-//   }
+  //   Future<void> presentDatePicker() async {
+  //   DateTime initial = DateTime.now();
+  //   if (selectedDate != null) {
+  //     initial = selectedDate!;
+  //   }
 
-//   final pickedDate = await showDatePicker(
-//     context: context,
-//     initialDate: initial,
-//     firstDate: DateTime.now(),
-//     lastDate: DateTime(2030),
-//   );
+  //   final pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: initial,
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime(2030),
+  //   );
 
-//   if (pickedDate == null) return;
+  //   if (pickedDate == null) return;
 
-//   setState(() {
-//     selectedDate = pickedDate;
-//   });
-// }
-
+  //   setState(() {
+  //     selectedDate = pickedDate;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -247,8 +246,6 @@ class _NewtaskState extends State<Newtask> {
                       }),
                     ),
                     SizedBox(height: 10.h),
-
-                    // Display the selected date or date range.
                     if (selectedDate != null)
                       Text(
                         "Selected Date: ${formatDate(selectedDate!)}",

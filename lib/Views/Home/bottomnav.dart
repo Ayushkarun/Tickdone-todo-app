@@ -65,6 +65,7 @@ class _BottomnavState extends State<Bottomnav> {
       floatbutton = null;
     }
     return Scaffold(
+       backgroundColor: Colors.black, 
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedindex,

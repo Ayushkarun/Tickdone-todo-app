@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
-
 import 'package:tickdone/Services/Provider/user_provider.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Views/Home/Emptytaskpage.dart';
-
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
@@ -22,7 +20,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
+  double calculateProgress(TaskProvider taskProvider) {
+    if (taskProvider.tasks.isEmpty) {
+      return 0.0;
+    }
+    final totalTasks = taskProvider.tasks.length;
+    final completedTasks = taskProvider.tasks
+        .where((task) {
+          final fields = task['fields'];
+          return fields?['isCompleted']?['booleanValue'] == true;
+        })
+        .length;
+    return (completedTasks / totalTasks) * 100;
+  }
+
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+
   Color getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'work':
@@ -50,13 +63,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
+      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate).then((_) {
+        _valueNotifier.value = calculateProgress(taskProvider);
+      });
     });
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // Stop observing
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -65,7 +80,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
+      taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate).then((_) {
+        _valueNotifier.value = calculateProgress(taskProvider);
+      });
     }
   }
 
@@ -80,14 +97,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     Widget mainContent;
 
     if (isLoading) {
-      mainContent = Center(child: CircularProgressIndicator());
+      mainContent = const Center(child: CircularProgressIndicator());
     } else if (task.isEmpty) {
-      mainContent = Emptytask();
+      mainContent = const Emptytask();
     } else {
       mainContent = Column(
         children: [
           Center(
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.92,
               height: 140.h,
               child: ClipRRect(
@@ -129,68 +146,66 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     ),
                     BlurryContainer(
                       blur: 20,
-                      width: MediaQuery.of(context).size.width * 0.80,
-                      height: 110.h,
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      height: 120.h,
                       elevation: 0,
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20.r),
                       padding: const EdgeInsets.all(0),
                       child: Column(
                         children: [
+                          SizedBox(height: 2.h),
                           Center(
                             child: GestureDetector(
-                              onTap: (){},
+                              onTap: () {},
                               child: SizedBox(
-                                           width: 115.w, // Adjust this value as needed
-                                height: 110.h, // Adjust this value as needed
+                                width: 115.w,
+                                height: 118.h,
                                 child: DashedCircularProgressBar.aspectRatio(
-                                  aspectRatio: 1, // width ÷ height
+                                  aspectRatio: 1,
                                   valueNotifier: _valueNotifier,
-                                  progress: 100,
+                                  progress: calculateProgress(taskProvider),
                                   startAngle: 225,
                                   sweepAngle: 270,
-                                  foregroundColor:  Colors.green,
+                                  foregroundColor: Colors.green,
                                   backgroundColor: const Color(0xffeeeeee),
                                   foregroundStrokeWidth: 15,
                                   backgroundStrokeWidth: 15,
                                   animation: true,
-                                  seekSize: 6,
+                                  seekSize: 10,
                                   seekColor: const Color(0xffeeeeee),
                                   child: Center(
                                     child: ValueListenableBuilder(
                                       valueListenable: _valueNotifier,
-                                      builder:
-                                          (_, double value, __) => Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                '${value.toInt()}%',
-                                                style:  TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.sp,
-                                                  fontFamily: 'Poppins'
-                                                ),
-                                              ),
-                                              Text(
-                                                'Completed',
-                                                style:  TextStyle(
-                                                  color: Color(0xffeeeeee),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12.sp,
-                                                  fontFamily: 'Poppins'
-                                                  
-                                                ),
-                                              ),
-                                            ],
+                                      builder: (_, double value, __) => Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '${value.toInt()}%',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14.sp,
+                                              fontFamily: 'Poppins',
+                                            ),
                                           ),
+                                          Text(
+                                            'Completed',
+                                            style: TextStyle(
+                                              color: const Color(0xffeeeeee),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.sp,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-
                           const SizedBox.shrink(),
                         ],
                       ),
@@ -204,12 +219,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           Expanded(
             child: ListView.builder(
               itemCount: task.length,
-
               itemBuilder: (context, index) {
                 final taskItem = task[index];
-
-                final taskId = taskItem['id'];
-
                 final title = taskItem['fields']['title']['stringValue'];
                 final description =
                     taskItem['fields']['description']['stringValue'];
@@ -217,7 +228,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 final time = taskItem['fields']['time']['stringValue'];
 
                 String? displayDate;
-
                 if (taskItem['fields']['date'] != null) {
                   final date =
                       taskItem['fields']['date'].containsKey('timestampValue')
@@ -235,7 +245,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     }
                   }
                 }
-                //5
                 return Card(
                   color: Colors.black,
                   shape: RoundedRectangleBorder(
@@ -253,10 +262,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           builder: (context) => TaskView(task: taskItem),
                         ),
                       );
-                      taskProvider.fetchTasksFromFirebase(
+                      await taskProvider.fetchTasksFromFirebase(
                         dateProvider.selectedDate,
                       );
-                      // fetchTasksFromFirebase();
                     },
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -283,15 +291,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           ),
                         ),
                         SizedBox(height: 8.h),
-                        Wrap(
-                          spacing: 8.w,
-                          runSpacing: 8.h,
+                        Row(
                           children: [
                             if (category.isNotEmpty)
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 4.h,
+                                  horizontal: 4.w,
+                                  vertical: 3.h,
                                 ),
                                 decoration: BoxDecoration(
                                   color: getCategoryColor(category),
@@ -302,16 +308,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Poppins',
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
+                            SizedBox(width: 3.w),
                             if (time.isNotEmpty)
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 5.w,
-                                  vertical: 4.h,
+                                  horizontal: 4.w,
+                                  vertical: 3.h,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.blueGrey,
@@ -331,14 +338,43 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
+                    leading: Checkbox(
+                      value: taskItem['fields']['isCompleted']?['booleanValue'] ??
+                          false,
+                      activeColor: const Color(0xFF1C0E6F),
+                      onChanged: (bool? value) async {
+                        if (value != null) {
+                           final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+                          final success = await taskProvider.updateTaskstatus(
+                            taskItem['id'],
+                            value,
+                          );
+                          if (success) {
+                            _valueNotifier.value = calculateProgress(taskProvider);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Failed to update task. Please try again.',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
                     trailing: IconButton(
                       icon: Icon(Icons.delete, color: Colors.red[400]),
                       onPressed: () async {
-                        // deleteTask(taskId);
+                        final taskId = taskItem['id'];
                         final success = await taskProvider.deleteTask(taskId);
                         if (success) {
+                          _valueNotifier.value = calculateProgress(
+                            taskProvider,
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               elevation: 0,
                               backgroundColor: Colors.transparent,
                               behavior: SnackBarBehavior.floating,
@@ -351,7 +387,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               elevation: 0,
                               backgroundColor: Colors.transparent,
                               behavior: SnackBarBehavior.floating,
@@ -411,41 +447,38 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ],
               ),
               SizedBox(height: 6.h),
-              Container(
-                child: DatePicker(
-                  DateTime.now(),
-                  height: 78.h,
-                  width: 55.w,
-                  initialSelectedDate: DateTime.now(),
-                  selectionColor: const Color(0xFF1C0E6F),
-                  selectedTextColor: Colors.white,
-                  dateTextStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w900,
-                  ),
-                  dayTextStyle: TextStyle(
-                    fontSize: 10.sp,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                  ),
-                  monthTextStyle: TextStyle(
-                    fontSize: 6.sp,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                  onDateChange: (date) {
-                    Provider.of<DateProvider>(
-                      context,
-                      listen: false,
-                    ).setSelectedDate(date);
-
-                    taskProvider.fetchTasksFromFirebase(date);
-                  },
+              DatePicker(
+                DateTime.now(),
+                height: 78.h,
+                width: 55.w,
+                initialSelectedDate: DateTime.now(),
+                selectionColor: const Color(0xFF1C0E6F),
+                selectedTextColor: Colors.white,
+                dateTextStyle: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w900,
                 ),
+                dayTextStyle: TextStyle(
+                  fontSize: 10.sp,
+                  color: Colors.grey,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                ),
+                monthTextStyle: TextStyle(
+                  fontSize: 6.sp,
+                  color: Colors.grey,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                ),
+                onDateChange: (date) {
+                  Provider.of<DateProvider>(
+                    context,
+                    listen: false,
+                  ).setSelectedDate(date);
+                  taskProvider.fetchTasksFromFirebase(date);
+                },
               ),
               SizedBox(height: 2.h),
               Center(
@@ -472,105 +505,3 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
   }
 }
-
-/*
-         // print(
-                //   "Rendering task: ID=${taskItem['id']}, date present=${taskItem['fields']['date'] != null}, "
-                //   "startDate present=${taskItem['fields']['startDate'] != null}",
-                // );
-
-                1
-                        // final utcSelectedDate = DateTime.utc(
-        //   selectedDate.year,
-        //   selectedDate.month,
-        //   selectedDate.day,
-        // );
-
-        2
-                // final dateRangeQueryBody = {
-        //   "structuredQuery": {
-        //     "from": [
-        //       {"collectionId": "tasks"}
-        //     ],
-        //     "where": {
-        //       "compositeFilter": {
-        //         "op": "AND",
-        //         "filters": [
-        //           {
-        //             "fieldFilter": {
-        //               "field": {"fieldPath": "startDate"},
-        //               "op": "LESS_THAN_OR_EQUAL",
-        //               "value": {
-        //                 "timestampValue": utcSelectedDate.toIso8601String()
-        //               }
-        //             }
-        //           },
-        //           {
-        //             "fieldFilter": {
-        //               "field": {"fieldPath": "endDate"},
-        //               "op": "GREATER_THAN_OR_EQUAL",
-        //               "value": {
-        //                 "timestampValue": utcSelectedDate.toIso8601String()
-        //               }
-        //             }
-        //           }
-        //         ]
-        //       }
-        //     }
-        //   }
-        // };
-
-        3
-                // final dateRangeResponse = await http.post(
-        //   url,
-        //   headers: {"Content-Type": "application/json"},
-        //   body: json.encode(dateRangeQueryBody),
-        // );
-
-        4
-
-                // if (dateRangeResponse.statusCode == 200) {
-        //   print("Date-range response body: ${dateRangeResponse.body}");
-        //   final List dateRangeData = json.decode(dateRangeResponse.body);
-        //   for (var item in dateRangeData) {
-        //     if (item.containsKey('document')) {
-        //       final doc = item['document'];
-        //       final taskId = doc['name'].split('/').last;
-        //       if (!task.any((t) => t['id'] == taskId)) {
-        //         print("Adding date-range task: $taskId"); // Add debug here
-        //         task.add({'id': taskId, 'fields': doc['fields']});
-        //       }
-        //     }
-        //   }
-        // } else {
-        //   print(
-        //     "Date-range query failed with status ${dateRangeResponse.statusCode}",
-        //   );
-        // }
-
-        //5
-                        // else if (taskItem['fields']['startDate'] != null &&
-                //     taskItem['fields']['endDate'] != null) {
-                //   final startDate =
-                //       taskItem['fields']['startDate']['timestampValue'];
-                //   final endDate =
-                //       taskItem['fields']['endDate']['timestampValue'];
-
-                //   if (startDate != null && endDate != null) {
-                //     try {
-                //       final parsedStartDate =
-                //           DateTime.parse(startDate).toLocal();
-                //       final parsedEndDate = DateTime.parse(endDate).toLocal();
-                //       displayDate =
-                //           'Range: ${DateFormat('dd MMM yyyy').format(parsedStartDate)} to ${DateFormat('dd MMM yyyy').format(parsedEndDate)}';
-                //     } catch (e) {
-                //       displayDate = 'Invalid Date Range';
-                //     }
-                //   }
-                // }
-
-
-
-
-
-*/
