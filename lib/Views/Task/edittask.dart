@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:tickdone/Services/Provider/date_provider.dart';
+import 'package:tickdone/Services/Provider/task_provider.dart';
 // import 'package:provider/provider.dart';
 // import 'package:tickdone/Services/Provider/task_provider.dart';
 // import 'package:tickdone/Services/Provider/date_provider.dart';
@@ -171,6 +174,17 @@ class _EditTaskState extends State<EditTask> {
               ),
             ),
           );
+
+          final taskProvider = Provider.of<TaskProvider>(
+            context,
+            listen: false,
+          );
+          final dateProvider = Provider.of<DateProvider>(
+            context,
+            listen: false,
+          );
+
+          await taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
           Navigator.pop(context);
           Navigator.pop(context);
         }

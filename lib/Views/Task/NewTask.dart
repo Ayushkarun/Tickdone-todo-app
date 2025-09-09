@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Services/Provider/date_provider.dart';
+import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Services/Task/Newtaskservice.dart';
 import 'package:intl/intl.dart';
 
@@ -370,6 +373,20 @@ class _NewtaskState extends State<Newtask> {
                                   taskData,
                                   context,
                                   userUid!,
+                                );
+                                // Get the TaskProvider instance
+                                final taskProvider = Provider.of<TaskProvider>(
+                                  context,
+                                  listen: false,
+                                );
+
+                                // Get the DateProvider to know which date's tasks to refresh
+                                final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                                await taskProvider.fetchTasksFromFirebase(
+                                  dateProvider.selectedDate,
                                 );
                                 Navigator.pop(context);
                               }

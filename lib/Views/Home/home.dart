@@ -25,12 +25,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       return 0.0;
     }
     final totalTasks = taskProvider.tasks.length;
-    final completedTasks = taskProvider.tasks
-        .where((task) {
+    final completedTasks =
+        taskProvider.tasks.where((task) {
           final fields = task['fields'];
           return fields?['isCompleted']?['booleanValue'] == true;
-        })
-        .length;
+        }).length;
     return (completedTasks / totalTasks) * 100;
   }
 
@@ -97,7 +96,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     Widget mainContent;
 
     if (isLoading) {
-      mainContent = const Center(child: CircularProgressIndicator());
+      mainContent = ListView.separated(
+        itemBuilder: (context, index) => Taskskeleton(),
+        separatorBuilder: (context, index) => SizedBox(height: 10.h),
+        itemCount: 3,
+      );
     } else if (task.isEmpty) {
       mainContent = const Emptytask();
     } else {
@@ -177,29 +180,32 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   child: Center(
                                     child: ValueListenableBuilder(
                                       valueListenable: _valueNotifier,
-                                      builder: (_, double value, __) => Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            '${value.toInt()}%',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14.sp,
-                                              fontFamily: 'Poppins',
-                                            ),
+                                      builder:
+                                          (_, double value, __) => Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                '${value.toInt()}%',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14.sp,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                'Completed',
+                                                style: TextStyle(
+                                                  color: const Color(
+                                                    0xffeeeeee,
+                                                  ),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.sp,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            'Completed',
-                                            style: TextStyle(
-                                              color: const Color(0xffeeeeee),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10.sp,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
                                   ),
                                 ),
@@ -339,18 +345,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ],
                     ),
                     leading: Checkbox(
-                      value: taskItem['fields']['isCompleted']?['booleanValue'] ??
+                      value:
+                          taskItem['fields']['isCompleted']?['booleanValue'] ??
                           false,
                       activeColor: const Color(0xFF1C0E6F),
                       onChanged: (bool? value) async {
                         if (value != null) {
-                           final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+                          final taskProvider = Provider.of<TaskProvider>(
+                            context,
+                            listen: false,
+                          );
                           final success = await taskProvider.updateTaskstatus(
                             taskItem['id'],
                             value,
                           );
                           if (success) {
-                            _valueNotifier.value = calculateProgress(taskProvider);
+                            _valueNotifier.value = calculateProgress(
+                              taskProvider,
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -381,7 +393,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               content: AwesomeSnackbarContent(
                                 title: 'Success!',
                                 message: 'Task deleted successfully!',
-                                contentType: ContentType.success,
+                                contentType: ContentType.warning,
                               ),
                             ),
                           );
@@ -501,6 +513,67 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Taskskeleton extends StatelessWidget {
+  const Taskskeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40.w,
+            height: 40.w,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 100.w, height: 16.h),
+                SizedBox(height: 8.h),
+                SkeletonBox(height: 14.h),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    SkeletonBox(width: 60.w, height: 14.h),
+                    SizedBox(width: 12.w),
+                    SkeletonBox(width: 60.w, height: 14.h),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SkeletonBox extends StatelessWidget {
+  final double? height, width;
+  const SkeletonBox({super.key, this.height, this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height ?? 16.h,
+      width: width ?? double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(8.r),
       ),
     );
   }
