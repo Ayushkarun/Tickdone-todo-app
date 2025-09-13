@@ -8,7 +8,7 @@ import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class TaskProvider extends ChangeNotifier {
-  List<Map<String, dynamic>> _tasks = [];
+  final List<Map<String, dynamic>> _tasks = [];
   bool _isLoading = false;
 
   List<Map<String, dynamic>> get tasks => _tasks;
@@ -19,8 +19,8 @@ class TaskProvider extends ChangeNotifier {
       final taskIndex = _tasks.indexWhere((task) => task['id'] == taskId);
       if (taskIndex == -1) return false;
 
-      final currentTask = _tasks[taskIndex];
-      final existingDate = currentTask['fields']['date']?['stringValue'];
+     
+  
       final url = Uri.parse(
         '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}&updateMask.fieldPaths=isCompleted',
       );

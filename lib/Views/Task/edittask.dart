@@ -51,7 +51,7 @@ class _EditTaskState extends State<EditTask> {
     // Load existing data into controllers and variables
     titlecontroller.text = fields['title']?['stringValue'] ?? '';
     descriptioncontroller.text = fields['description']?['stringValue'] ?? '';
-    selectedCategory = fields['category']?['stringValue'] ?? null;
+    selectedCategory = fields['category']?['stringValue'];
 
     if (dateData != null) {
       String rawDate;

@@ -4,6 +4,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickdone/Services/Notification/notification_service.dart';
 import 'package:tickdone/Views/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
@@ -449,14 +450,12 @@ class _AccountState extends State<Account> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           child: Column(
-           
             children: [
               // This Expanded widget makes the content area fill all available space
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-
                       // Profile Card
                       Center(
                         child: SizedBox(
@@ -537,7 +536,13 @@ class _AccountState extends State<Account> {
                           ),
                         ),
                       ),
-                      
+
+                      // ElevatedButton(onPressed: (){
+                      //   NotiService().showNotification(
+                      //     title: 'Hai',
+                      //     body: 'Bye'
+                      //   );
+                      // }, child: Text('notification')),
                       TextButton.icon(
                         onPressed: () => showForgotPasswordDialog(),
                         icon: Icon(Icons.key, color: Colors.white, size: 24.sp),
@@ -581,6 +586,22 @@ class _AccountState extends State<Account> {
                         onPressed: () => helpalert(context),
                         child: Text(
                           'Help & Feedback',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          NotificationService().showNotification(
+                            title: 'Task Pending',
+                            body: 'Dont forget to complete it!'
+                          );
+                        },
+                        child: Text(
+                          'Notification',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'Poppins',

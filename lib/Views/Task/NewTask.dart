@@ -372,7 +372,7 @@ class _NewtaskState extends State<Newtask> {
                                 await taskService.addtasktofirebase(
                                   taskData,
                                   context,
-                                  userUid!,
+                                  userUid,
                                 );
                                 // Get the TaskProvider instance
                                 final taskProvider = Provider.of<TaskProvider>(

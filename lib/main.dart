@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tickdone/Services/Notification/notification_service.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Views/Splashscreen/splash_screen.dart';
@@ -7,15 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
-// import 'Services/Provider/task_provider.dart';
-// import 'package:provider/provider.dart';
 
-// import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
   await Firebase.initializeApp(); // Initialize Firebase
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Future.delayed(Duration(seconds: 1));

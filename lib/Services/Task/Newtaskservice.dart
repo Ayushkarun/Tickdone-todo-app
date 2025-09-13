@@ -13,14 +13,13 @@ class Addnewtaskservice {
     String userId,
   ) async {
     try {
-    
       if (taskdata.containsKey("date")) {
         final dateValue = taskdata["date"];
         if (dateValue is String && dateValue.isNotEmpty) {
-    final formattedDate = DateTime.parse(dateValue);
-    taskdata["date"] = {
-      "stringValue": DateFormat('yyyy-MM-dd').format(formattedDate)
-    };
+          final formattedDate = DateTime.parse(dateValue);
+          taskdata["date"] = {
+            "stringValue": DateFormat('yyyy-MM-dd').format(formattedDate),
+          };
         }
       }
       taskdata['userId'] = {'stringValue': userId};
