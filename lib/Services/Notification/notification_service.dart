@@ -1,5 +1,9 @@
+// notification_service.dart
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart'; // 👈 add this
+import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 
 class NotificationService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -7,23 +11,23 @@ class NotificationService {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  ///initialization
   Future<void> initNotification() async {
     if (_isInitialized) return;
+    tz.initializeTimeZones();
 
-    // 👇 request notification permission (Android 13+)
     await _requestNotificationPermission();
 
     const initSettingsAndroid = AndroidInitializationSettings(
       '@drawable/notification',
     );
-
     const initSetting = InitializationSettings(android: initSettingsAndroid);
 
     await notificationsPlugin.initialize(initSetting);
-    _isInitialized = true; // 👈 mark as initialized
+    _isInitialized = true;
   }
 
-  // 👇 permission handling
+  //  permission handling
   Future<void> _requestNotificationPermission() async {
     final status = await Permission.notification.status;
     if (status.isDenied) {
@@ -31,6 +35,7 @@ class NotificationService {
     }
   }
 
+  //Details setup
   NotificationDetails notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
@@ -43,11 +48,40 @@ class NotificationService {
     );
   }
 
+  //show an immediate notifiaction
   Future<void> showNotification({
     int id = 0,
     String? title,
     String? body,
   }) async {
     return notificationsPlugin.show(id, title, body, notificationDetails());
+  }
+
+  // MODIFIED: This method now takes a specific time to schedule the notification.
+  Future<void> scheduleNotificationAtTime({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledTime,
+  }) async {
+    var androidDetails = const AndroidNotificationDetails(
+      'important_notification',
+      'My Channel',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var notificationDetails = NotificationDetails(android: androidDetails);
+
+    await notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      // We convert the chosen DateTime to a timezone-aware DateTime
+      tz.TZDateTime.from(scheduledTime, tz.local),
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+
+    );
   }
 }

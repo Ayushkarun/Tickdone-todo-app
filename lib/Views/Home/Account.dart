@@ -29,6 +29,55 @@ class _AccountState extends State<Account> {
     _fetchUserProfile();
   }
 
+  Future<void> _showTimePickerAndScheduleNotification() async {
+    // Show a time picker for the user to select a time
+    final selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(), // The clock will start at the current time
+    );
+
+    // If the user didn't cancel the time picker
+    if (selectedTime != null) {
+      // Get the current date and combine it with the selected time
+      final now = DateTime.now();
+      final scheduledDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+
+      // Now, we check if the selected time is in the future.
+      // If it's in the past, it won't work, so we need to add a day.
+      final finalScheduledTime = scheduledDateTime.isAfter(now)
+          ? scheduledDateTime
+          : scheduledDateTime.add(const Duration(days: 1));
+
+      // Finally, call the new method from your NotificationService
+      NotificationService().scheduleNotificationAtTime(
+        id: 1, // You can use a unique ID for each notification
+        title: 'Task Reminder',
+        body: 'Your task is due now!',
+        scheduledTime: finalScheduledTime,
+      );
+
+      // Show a message to the user so they know it worked
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Success!',
+            message: 'Notification scheduled for ${finalScheduledTime.toString().split('.')[0]}',
+            contentType: ContentType.success,
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> _fetchUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     final uid = prefs.getString('userUID');
@@ -593,15 +642,26 @@ class _AccountState extends State<Account> {
                           ),
                         ),
                       ),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     NotificationService().showNotification(
+                      //       title: 'Task Pending',
+                      //       body: 'Dont forget to complete it!',
+                      //     );
+                      //   },
+                      //   child: Text(
+                      //     'Notification',
+                      //     style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontFamily: 'Poppins',
+                      //       fontSize: 16.sp,
+                      //     ),
+                      //   ),
+                      // ),
                       TextButton(
-                        onPressed: () {
-                          NotificationService().showNotification(
-                            title: 'Task Pending',
-                            body: 'Dont forget to complete it!'
-                          );
-                        },
+                        onPressed: _showTimePickerAndScheduleNotification,
                         child: Text(
-                          'Notification',
+                          'Schedule Notification',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'Poppins',

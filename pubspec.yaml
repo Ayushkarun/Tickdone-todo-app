@@ -56,6 +56,9 @@ dependencies:
   dashed_circular_progress_bar: ^0.0.6
   flutter_local_notifications: ^19.4.2
   permission_handler: ^11.3.1
+  timezone: ^0.10.1
+
+
   # googleapis: ^14.0.0
   # googleapis_auth: ^2.0.0
   # firebase_messaging: ^14.6.9

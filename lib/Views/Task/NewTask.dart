@@ -8,6 +8,7 @@ import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Services/Task/Newtaskservice.dart';
 import 'package:intl/intl.dart';
+import 'package:tickdone/Services/Notification/notification_service.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});
@@ -69,6 +70,16 @@ class _NewtaskState extends State<Newtask> {
     return selectedDate!.year == now.year &&
         selectedDate!.month == now.month &&
         selectedDate!.day == now.day;
+  }
+
+  // New function to be added to the _NewtaskState class
+  void scheduleTaskNotification(String title, DateTime scheduledDateTime) {
+    NotificationService().scheduleNotificationAtTime(
+      id: title.hashCode, // A simple unique ID for the task
+      title: 'Reminder :$title ',
+      body: 'Lets Do it !!',
+      scheduledTime: scheduledDateTime,
+    );
   }
 
   // --- Functions to Handle Pickers ---
@@ -385,6 +396,31 @@ class _NewtaskState extends State<Newtask> {
                                   context,
                                   listen: false,
                                 );
+                                if (selectedDate != null &&
+                                    selectedTime != null) {
+                                  final now = DateTime.now();
+                                  final scheduledDateTime = DateTime(
+                                    selectedDate!.year,
+                                    selectedDate!.month,
+                                    selectedDate!.day,
+                                    selectedTime!.hour,
+                                    selectedTime!.minute,
+                                  );
+
+                                  // Check if the scheduled time is in the past and adjust it if needed.
+                                  final finalScheduledTime =
+                                      scheduledDateTime.isAfter(now)
+                                          ? scheduledDateTime
+                                          : scheduledDateTime.add(
+                                            const Duration(days: 1),
+                                          );
+
+                                  // Call the new method to schedule the notification.
+                                  scheduleTaskNotification(
+                                    titlecontroller.text,
+                                    finalScheduledTime,
+                                  );
+                                }
                                 await taskProvider.fetchTasksFromFirebase(
                                   dateProvider.selectedDate,
                                 );

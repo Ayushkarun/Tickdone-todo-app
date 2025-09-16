@@ -11,9 +11,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
 
 
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
+  
   NotificationService().initNotification();
   await Firebase.initializeApp(); // Initialize Firebase
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
