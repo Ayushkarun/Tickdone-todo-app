@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 
+
 class TaskProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _tasks = [];
   bool _isLoading = false;
@@ -155,5 +156,17 @@ class TaskProvider extends ChangeNotifier {
       print('Error deleting task: $e');
       return false;
     }
+  }
+    double calculateProgress() {
+    if (_tasks.isEmpty) {
+      return 0.0;
+    }
+    final totalTasks = _tasks.length;
+    final completedTasks =
+        _tasks.where((task) {
+          final fields = task['fields'];
+          return fields?['isCompleted']?['booleanValue'] == true;
+        }).length;
+    return (completedTasks / totalTasks) * 100;
   }
 }

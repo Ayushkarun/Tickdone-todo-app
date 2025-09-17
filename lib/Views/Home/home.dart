@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Views/Home/Emptytaskpage.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:tickdone/Views/Home/Progressscreen.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
@@ -20,18 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
-  double calculateProgress(TaskProvider taskProvider) {
-    if (taskProvider.tasks.isEmpty) {
-      return 0.0;
-    }
-    final totalTasks = taskProvider.tasks.length;
-    final completedTasks =
-        taskProvider.tasks.where((task) {
-          final fields = task['fields'];
-          return fields?['isCompleted']?['booleanValue'] == true;
-        }).length;
-    return (completedTasks / totalTasks) * 100;
-  }
 
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
@@ -63,7 +52,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
       taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate).then((_) {
-        _valueNotifier.value = calculateProgress(taskProvider);
+        _valueNotifier.value = taskProvider.calculateProgress();
       });
     });
   }
@@ -80,7 +69,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
       taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate).then((_) {
-        _valueNotifier.value = calculateProgress(taskProvider);
+        _valueNotifier.value = taskProvider.calculateProgress();
       });
     }
   }
@@ -107,116 +96,124 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       mainContent = Column(
         children: [
           Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.92,
-              height: 140.h,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.r),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      top: -40.h,
-                      left: -40.w,
-                      child: Container(
-                        width: 160.w,
-                        height: 160.h,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF10083F), Color(0xFF2B1B80)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+            child: GestureDetector(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Progressscreen()),
+                );
+              },
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.92,
+                height: 140.h,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.r),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        top: -40.h,
+                        left: -40.w,
+                        child: Container(
+                          width: 160.w,
+                          height: 160.h,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF10083F), Color(0xFF2B1B80)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: -50.h,
-                      right: -50.w,
-                      child: Container(
-                        width: 180.w,
-                        height: 180.h,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF2B1B80), Color(0xFF5C39FF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                      Positioned(
+                        bottom: -50.h,
+                        right: -50.w,
+                        child: Container(
+                          width: 180.w,
+                          height: 180.h,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF2B1B80), Color(0xFF5C39FF)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    BlurryContainer(
-                      blur: 20,
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      height: 120.h,
-                      elevation: 0,
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20.r),
-                      padding: const EdgeInsets.all(0),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 2.h),
-                          Center(
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: SizedBox(
-                                width: 115.w,
-                                height: 118.h,
-                                child: DashedCircularProgressBar.aspectRatio(
-                                  aspectRatio: 1,
-                                  valueNotifier: _valueNotifier,
-                                  progress: calculateProgress(taskProvider),
-                                  startAngle: 225,
-                                  sweepAngle: 270,
-                                  foregroundColor: Colors.green,
-                                  backgroundColor: const Color(0xffeeeeee),
-                                  foregroundStrokeWidth: 15,
-                                  backgroundStrokeWidth: 15,
-                                  animation: true,
-                                  seekSize: 10,
-                                  seekColor: const Color(0xffeeeeee),
-                                  child: Center(
-                                    child: ValueListenableBuilder(
-                                      valueListenable: _valueNotifier,
-                                      builder:
-                                          (_, double value, __) => Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                '${value.toInt()}%',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.sp,
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                              ),
-                                              Text(
-                                                'Completed',
-                                                style: TextStyle(
-                                                  color: const Color(
-                                                    0xffeeeeee,
+                      BlurryContainer(
+                        blur: 20,
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        height: 120.h,
+                        elevation: 0,
+                        color: Colors.white.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20.r),
+                        padding: const EdgeInsets.all(0),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 2.h),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: SizedBox(
+                                  width: 115.w,
+                                  height: 118.h,
+                                  child: DashedCircularProgressBar.aspectRatio(
+                                    aspectRatio: 1,
+                                    valueNotifier: _valueNotifier,
+                                    progress: taskProvider.calculateProgress(),
+                                    startAngle: 225,
+                                    sweepAngle: 270,
+                                    foregroundColor: Colors.green,
+                                    backgroundColor: const Color(0xffeeeeee),
+                                    foregroundStrokeWidth: 15,
+                                    backgroundStrokeWidth: 15,
+                                    animation: true,
+                                    seekSize: 10,
+                                    seekColor: const Color(0xffeeeeee),
+                                    child: Center(
+                                      child: ValueListenableBuilder(
+                                        valueListenable: _valueNotifier,
+                                        builder:
+                                            (_, double value, __) => Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  '${value.toInt()}%',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14.sp,
+                                                    fontFamily: 'Poppins',
                                                   ),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 10.sp,
-                                                  fontFamily: 'Poppins',
                                                 ),
-                                              ),
-                                            ],
-                                          ),
+                                                Text(
+                                                  'Completed',
+                                                  style: TextStyle(
+                                                    color: const Color(
+                                                      0xffeeeeee,
+                                                    ),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 10.sp,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox.shrink(),
-                        ],
+                            const SizedBox.shrink(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -360,9 +357,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             value,
                           );
                           if (success) {
-                            _valueNotifier.value = calculateProgress(
-                              taskProvider,
-                            );
+                            _valueNotifier.value = taskProvider.calculateProgress();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -382,9 +377,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         final taskId = taskItem['id'];
                         final success = await taskProvider.deleteTask(taskId);
                         if (success) {
-                          _valueNotifier.value = calculateProgress(
-                            taskProvider,
-                          );
+                          _valueNotifier.value = taskProvider.calculateProgress();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               elevation: 0,
