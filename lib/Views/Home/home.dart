@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
-
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
   Color getCategoryColor(String category) {
@@ -96,13 +95,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       mainContent = Column(
         children: [
           Center(
-            child: GestureDetector(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.r),
               onTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Progressscreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const Progressscreen(),
+                  ),
                 );
               },
+
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.92,
                 height: 140.h,
@@ -155,54 +158,51 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           children: [
                             SizedBox(height: 2.h),
                             Center(
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: SizedBox(
-                                  width: 115.w,
-                                  height: 118.h,
-                                  child: DashedCircularProgressBar.aspectRatio(
-                                    aspectRatio: 1,
-                                    valueNotifier: _valueNotifier,
-                                    progress: taskProvider.calculateProgress(),
-                                    startAngle: 225,
-                                    sweepAngle: 270,
-                                    foregroundColor: Colors.green,
-                                    backgroundColor: const Color(0xffeeeeee),
-                                    foregroundStrokeWidth: 15,
-                                    backgroundStrokeWidth: 15,
-                                    animation: true,
-                                    seekSize: 10,
-                                    seekColor: const Color(0xffeeeeee),
-                                    child: Center(
-                                      child: ValueListenableBuilder(
-                                        valueListenable: _valueNotifier,
-                                        builder:
-                                            (_, double value, __) => Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  '${value.toInt()}%',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14.sp,
-                                                    fontFamily: 'Poppins',
-                                                  ),
+                              child: SizedBox(
+                                width: 115.w,
+                                height: 118.h,
+                                child: DashedCircularProgressBar.aspectRatio(
+                                  aspectRatio: 1,
+                                  valueNotifier: _valueNotifier,
+                                  progress: taskProvider.calculateProgress(),
+                                  startAngle: 225,
+                                  sweepAngle: 270,
+                                  foregroundColor: Colors.green,
+                                  backgroundColor: const Color(0xffeeeeee),
+                                  foregroundStrokeWidth: 15,
+                                  backgroundStrokeWidth: 15,
+                                  animation: true,
+                                  seekSize: 10,
+                                  seekColor: const Color(0xffeeeeee),
+                                  child: Center(
+                                    child: ValueListenableBuilder(
+                                      valueListenable: _valueNotifier,
+                                      builder:
+                                          (_, double value, __) => Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                '${value.toInt()}%',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14.sp,
+                                                  fontFamily: 'Poppins',
                                                 ),
-                                                Text(
-                                                  'Completed',
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xffeeeeee,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 10.sp,
-                                                    fontFamily: 'Poppins',
+                                              ),
+                                              Text(
+                                                'Completed',
+                                                style: TextStyle(
+                                                  color: const Color(
+                                                    0xffeeeeee,
                                                   ),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.sp,
+                                                  fontFamily: 'Poppins',
                                                 ),
-                                              ],
-                                            ),
-                                      ),
+                                              ),
+                                            ],
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -357,7 +357,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             value,
                           );
                           if (success) {
-                            _valueNotifier.value = taskProvider.calculateProgress();
+                            _valueNotifier.value =
+                                taskProvider.calculateProgress();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -377,7 +378,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         final taskId = taskItem['id'];
                         final success = await taskProvider.deleteTask(taskId);
                         if (success) {
-                          _valueNotifier.value = taskProvider.calculateProgress();
+                          _valueNotifier.value =
+                              taskProvider.calculateProgress();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               elevation: 0,
