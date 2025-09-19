@@ -76,7 +76,7 @@ class _NewtaskState extends State<Newtask> {
   void scheduleTaskNotification(String title, DateTime scheduledDateTime) {
     NotificationService().scheduleNotificationAtTime(
       id: title.hashCode, // A simple unique ID for the task
-      title: 'Reminder :$title ',
+      title: 'Task Reminder:$title ',
       body: 'Lets Do it !!',
       scheduledTime: scheduledDateTime,
     );
@@ -272,7 +272,7 @@ class _NewtaskState extends State<Newtask> {
                     SizedBox(height: 10.h),
 
                     // Show the "Pick Time" button ONLY if a single date is selected AND it is today.
-                    if (isToday)
+                    
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1C0E6F),

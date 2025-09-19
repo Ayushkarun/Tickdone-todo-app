@@ -1,4 +1,3 @@
-// In Edittask.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -10,9 +9,7 @@ import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
-// import 'package:provider/provider.dart';
-// import 'package:tickdone/Services/Provider/task_provider.dart';
-// import 'package:tickdone/Services/Provider/date_provider.dart';
+import 'package:tickdone/Services/Notification/notification_service.dart';
 
 class EditTask extends StatefulWidget {
   final Map taskToEdit;
@@ -184,6 +181,28 @@ class _EditTaskState extends State<EditTask> {
             listen: false,
           );
 
+          NotificationService().notificationsPlugin.cancel(
+            titlecontroller.text.hashCode,
+          );
+
+          if (selectedDate != null && selectedTime != null) {
+            final scheduledDateTime = DateTime(
+              selectedDate!.year,
+              selectedDate!.month,
+              selectedDate!.day,
+              selectedTime!.hour,
+              selectedTime!.minute,
+            );
+            if (scheduledDateTime.isAfter(DateTime.now())) {
+              NotificationService().scheduleNotificationAtTime(
+                id: titlecontroller.text.hashCode,
+                title: 'Task Reminder:${titlecontroller.text}',
+                body: 'Time to get it done!',
+                scheduledTime: scheduledDateTime,
+              );
+            }
+          }
+
           await taskProvider.fetchTasksFromFirebase(dateProvider.selectedDate);
           Navigator.pop(context);
           Navigator.pop(context);
@@ -336,54 +355,51 @@ class _EditTaskState extends State<EditTask> {
                           }).toList(),
                     ),
                     SizedBox(height: 10.h),
-                    if (isToday)
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1C0E6F),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 12.h,
-                            horizontal: 20.w,
-                          ),
+
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1C0E6F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            showPicker(
-                              context: context,
-                              value:
-                                  selectedTime ??
-                                  Time(
-                                    hour: DateTime.now().hour,
-                                    minute: DateTime.now().minute,
-                                  ),
-                              onChange: (newTime) {
-                                setState(() {
-                                  selectedTime = newTime;
-                                });
-                              },
-                              iosStylePicker: true,
-                              is24HrFormat: false,
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.access_time,
-                          color: Colors.white,
-                        ),
-                        label: Text(
-                          selectedTime != null
-                              ? 'Change Time: ${formatTime(selectedTime!)}'
-                              : "Pick Time (Optional)",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15.sp,
-                            color: Colors.white,
-                          ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 20.w,
                         ),
                       ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          showPicker(
+                            context: context,
+                            value:
+                                selectedTime ??
+                                Time(
+                                  hour: DateTime.now().hour,
+                                  minute: DateTime.now().minute,
+                                ),
+                            onChange: (newTime) {
+                              setState(() {
+                                selectedTime = newTime;
+                              });
+                            },
+                            iosStylePicker: true,
+                            is24HrFormat: false,
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.access_time, color: Colors.white),
+                      label: Text(
+                        selectedTime != null
+                            ? 'Change Time: ${formatTime(selectedTime!)}'
+                            : "Pick Time (Optional)",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 20.h),
                     Center(
                       child: SizedBox(
