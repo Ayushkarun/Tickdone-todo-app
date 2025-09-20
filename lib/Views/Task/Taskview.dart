@@ -251,11 +251,21 @@ class _TaskViewState extends State<TaskView> {
             // Edit Button
             Center(
               child: TextButton.icon(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => EditTask(taskToEdit: widget.task),
+                    PageRouteBuilder(
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              EditTask(taskToEdit: widget.task),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
                     ),
                   );
                 },

@@ -4,7 +4,6 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tickdone/Services/Notification/notification_service.dart';
 import 'package:tickdone/Views/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
@@ -27,55 +26,6 @@ class _AccountState extends State<Account> {
     super.initState();
     // Fetch the user's profile as soon as the widget is created
     _fetchUserProfile();
-  }
-
-  Future<void> _showTimePickerAndScheduleNotification() async {
-    // Show a time picker for the user to select a time
-    final selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(), // The clock will start at the current time
-    );
-
-    // If the user didn't cancel the time picker
-    if (selectedTime != null) {
-      // Get the current date and combine it with the selected time
-      final now = DateTime.now();
-      final scheduledDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
-
-      // Now, we check if the selected time is in the future.
-      // If it's in the past, it won't work, so we need to add a day.
-      final finalScheduledTime = scheduledDateTime.isAfter(now)
-          ? scheduledDateTime
-          : scheduledDateTime.add(const Duration(days: 1));
-
-      // Finally, call the new method from your NotificationService
-      NotificationService().scheduleNotificationAtTime(
-        id: 1, // You can use a unique ID for each notification
-        title: 'Task Reminder',
-        body: 'Your task is due now!',
-        scheduledTime: finalScheduledTime,
-      );
-
-      // Show a message to the user so they know it worked
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Success!',
-            message: 'Notification scheduled for ${finalScheduledTime.toString().split('.')[0]}',
-            contentType: ContentType.success,
-          ),
-        ),
-      );
-    }
   }
 
   Future<void> _fetchUserProfile() async {
@@ -658,17 +608,6 @@ class _AccountState extends State<Account> {
                       //     ),
                       //   ),
                       // ),
-                      TextButton(
-                        onPressed: _showTimePickerAndScheduleNotification,
-                        child: Text(
-                          'Schedule Notification',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

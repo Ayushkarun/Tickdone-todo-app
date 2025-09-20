@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:provider/provider.dart';
+import 'package:tickdone/Services/Notification/notification_service.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
@@ -100,8 +100,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               onTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const Progressscreen(),
+                  PageRouteBuilder(
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const Progressscreen(),
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
                   ),
                 );
               },
@@ -261,8 +271,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     onTap: () async {
                       await Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => TaskView(task: taskItem),
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  TaskView(task: taskItem),
+                          transitionsBuilder: (
+                            context,
+                            animation,
+                            secondaryAnimation,
+                            child,
+                          ) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
                         ),
                       );
                       await taskProvider.fetchTasksFromFirebase(
@@ -285,6 +308,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (description.isNotEmpty)
                         Text(
                           description,
                           style: TextStyle(
@@ -293,6 +317,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             fontSize: 13.sp,
                           ),
                         ),
+                        if (description.isNotEmpty)
                         SizedBox(height: 8.h),
                         Row(
                           children: [
@@ -328,7 +353,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   borderRadius: BorderRadius.circular(10.r),
                                 ),
                                 child: Text(
-                                  'Due: $time',
+                                  'Time: $time',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Poppins',
@@ -357,6 +382,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             value,
                           );
                           if (success) {
+                            // Cancel the notification when task is marked done (checkbox clicked)
+                            // 💡 NEW: Cancel the notification when task is marked as completed.
+                            if (value) {
+                              // Only cancel if the checkbox is checked (task completed)
+                              final taskTitle =
+                                  taskItem['fields']['title']['stringValue'];
+                              NotificationService().notificationsPlugin.cancel(
+                                taskTitle.hashCode,
+                              );
+                            }
+
                             _valueNotifier.value =
                                 taskProvider.calculateProgress();
                           } else {
@@ -376,6 +412,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       icon: Icon(Icons.delete, color: Colors.red[400]),
                       onPressed: () async {
                         final taskId = taskItem['id'];
+                        final taskTitle =
+                            taskItem['fields']['title']['stringValue']; // Get the title
+
+                        // Cancel the notification before deleting the task.
+                        NotificationService().notificationsPlugin.cancel(
+                          taskTitle.hashCode,
+                        );
+
                         final success = await taskProvider.deleteTask(taskId);
                         if (success) {
                           _valueNotifier.value =

@@ -161,7 +161,7 @@ class _CalenderState extends State<Calender> {
     }
   }
 
-    void onDayselect(DateTime day, DateTime focusedDay) {
+  void onDayselect(DateTime day, DateTime focusedDay) {
     // You no longer need setState here since the provider handles the state change
     Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
     Provider.of<TaskProvider>(
@@ -199,8 +199,8 @@ class _CalenderState extends State<Calender> {
 
   @override
   Widget build(BuildContext context) {
-      final dateProvider = context.watch<DateProvider>(); // Watch the provider
-  final selectedDate = dateProvider.selectedDate; // Get the selected date
+    final dateProvider = context.watch<DateProvider>(); // Watch the provider
+    final selectedDate = dateProvider.selectedDate; // Get the selected date
     final taskProvider = context.watch<TaskProvider>();
     final isLoading = taskProvider.isLoading;
     final tasks = taskProvider.tasks;
@@ -236,14 +236,23 @@ class _CalenderState extends State<Calender> {
                 onTap: () async {
                   await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => TaskView(task: taskItem),
+                    PageRouteBuilder(
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              TaskView(task: taskItem),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
                     ),
                   );
                   // After returning from the TaskView, refresh the tasks
                   // fetchTaskfromfirebase(today);
-                   taskProvider.fetchTasksFromFirebase(today);
-
+                  taskProvider.fetchTasksFromFirebase(today);
                 },
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 16.w,
@@ -432,9 +441,7 @@ class _CalenderState extends State<Calender> {
                 ),
               ),
             ),
-            SizedBox(
-              height:  5.h,
-            ),
+            SizedBox(height: 5.h),
             mainContent,
           ],
         ),

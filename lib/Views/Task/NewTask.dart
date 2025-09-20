@@ -175,7 +175,7 @@ class _NewtaskState extends State<Newtask> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Text(
-                              'Single Day',
+                              'Select Date',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Poppins',
@@ -261,11 +261,14 @@ class _NewtaskState extends State<Newtask> {
                     ),
                     SizedBox(height: 10.h),
                     if (selectedDate != null)
-                      Text(
-                        "Selected Date: ${formatDate(selectedDate!)}",
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
+                      Center(
+                        child: Text(
+                          "Selected Date: ${formatDate(selectedDate!)}",
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
 
@@ -323,12 +326,15 @@ class _NewtaskState extends State<Newtask> {
                     if (selectedTime != null)
                       Padding(
                         padding: EdgeInsets.only(top: 8.h),
-                        child: Text(
-                          "Selected Time: ${formatTime(selectedTime!)}",
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            color: Colors.white,
+                        child: Center(
+                          child: Text(
+                            "Selected Time: ${formatTime(selectedTime!)}",
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
                       ),

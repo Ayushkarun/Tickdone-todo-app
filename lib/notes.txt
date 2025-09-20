@@ -316,3 +316,74 @@ Common pitfalls (so you don’t get stuck)
 ✅ Ensure you set it after login.
 
 If you want, I can rewrite your fetchTasksFromFirebase with extra comments inline (so future-you immediately knows what each line does).
+
+
+
+  Future<void> _showTimePickerAndScheduleNotification() async {
+    // Show a time picker for the user to select a time
+    final selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(), // The clock will start at the current time
+    );
+
+    // If the user didn't cancel the time picker
+    if (selectedTime != null) {
+      // Get the current date and combine it with the selected time
+      final now = DateTime.now();
+      final scheduledDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+
+      // Now, we check if the selected time is in the future.
+      // If it's in the past, it won't work, so we need to add a day.
+      final finalScheduledTime = scheduledDateTime.isAfter(now)
+          ? scheduledDateTime
+          : scheduledDateTime.add(const Duration(days: 1));
+
+      // Finally, call the new method from your NotificationService
+      NotificationService().scheduleNotificationAtTime(
+        id: 1, // You can use a unique ID for each notification
+        title: 'Task Reminder',
+        body: 'Your task is due now!',
+        scheduledTime: finalScheduledTime,
+      );
+
+      // Show a message to the user so they know it worked
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.transparent,
+          content: AwesomeSnackbarContent(
+            title: 'Success!',
+            message: 'Notification scheduled for ${finalScheduledTime.toString().split('.')[0]}',
+            contentType: ContentType.success,
+          ),
+        ),
+      );
+    }
+  }
+
+
+     onTap: () async {
+                await Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder:
+                        (context, animation, secondaryAnimation) =>
+                            const Progressscreen(),
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                  ),
+                );
+              },
