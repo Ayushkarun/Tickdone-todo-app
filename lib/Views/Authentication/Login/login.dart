@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
+import 'package:tickdone/Views/Authentication/Register/register.dart';
 import 'package:tickdone/Views/Home/Createprofile.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -41,7 +42,6 @@ class _LoginpageState extends State<Loginpage> {
       final response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $idToken'},
-      
       );
       if (response.statusCode == 404) {
         Navigator.pushReplacement(
@@ -398,22 +398,6 @@ class _LoginpageState extends State<Loginpage> {
         await prefs.setString('userUID', result['localId']);
 
         await checkprofileandNavigate();
-
-        // Navigator.pushReplacement(
-        //   context,
-        //   PageRouteBuilder(
-        //     pageBuilder: (context, animation, secondaryAnimation) => Bottomnav(),
-        //     transitionsBuilder: (
-        //       context,
-        //       animation,
-        //       secondaryAnimation,
-        //       child,
-        //     ) {
-        //       return FadeTransition(opacity: animation, child: child);
-        //     },
-        //   ),
-        // );
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             elevation: 0,
@@ -478,7 +462,6 @@ class _LoginpageState extends State<Loginpage> {
 
   @override
   Widget build(BuildContext context) {
-  
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -759,7 +742,28 @@ class _LoginpageState extends State<Loginpage> {
                             onPressed: () {
                               emailcontrollerlogin.clear();
                               passwordControllerlogin.clear();
-                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                      ) => const Register(),
+                                  transitionsBuilder: (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1C0E6F),

@@ -368,6 +368,7 @@ class _EditTaskState extends State<EditTask> {
                         ),
                       ),
                       onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         Navigator.of(context).push(
                           showPicker(
                             context: context,

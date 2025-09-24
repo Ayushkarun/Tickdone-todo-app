@@ -67,6 +67,16 @@ class Aboutus extends StatelessWidget {
                 ),
               ),
             ),
+            Center(
+              child: Text(
+                'By Ayush Karun',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                ),
+              ),
+            ),
             SizedBox(height: 5.h),
             Center(
               child: IconButton(

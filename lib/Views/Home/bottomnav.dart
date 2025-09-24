@@ -17,14 +17,23 @@ class Bottomnav extends StatefulWidget {
 
 class _BottomnavState extends State<Bottomnav> {
   int selectedindex = 0;
+  final PageController _pageController = PageController();
 
   final List<Widget> widgetoptions = [Home(), Calender(), Account()];
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget? floatbutton;
+
     void onTabTapped(int index) {
-      if (selectedindex == 1 && index == 0) {
+      if ((selectedindex == 1 && index == 0) ||
+          (selectedindex == 0 && index == 1)) {
         final dateProvider = context.read<DateProvider>();
         final taskProvider = context.read<TaskProvider>();
         final today = DateTime.now();
@@ -38,7 +47,9 @@ class _BottomnavState extends State<Bottomnav> {
       setState(() {
         selectedindex = index;
       });
+      _pageController.jumpToPage(index);
     }
+
     if (selectedindex == 0 || selectedindex == 1) {
       floatbutton = FloatingActionButton(
         onPressed: () {
@@ -65,11 +76,11 @@ class _BottomnavState extends State<Bottomnav> {
       floatbutton = null;
     }
     return Scaffold(
-       backgroundColor: Colors.black, 
+      backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedindex,
-        onTap:onTabTapped,
+        onTap: onTabTapped,
         backgroundColor: Colors.black,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
@@ -84,7 +95,27 @@ class _BottomnavState extends State<Bottomnav> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
         ],
       ),
-      body: IndexedStack(index: selectedindex, children: widgetoptions),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          if ((selectedindex == 1 && index == 0) ||
+              (selectedindex == 0 && index == 1)) {
+            final dateProvider = context.read<DateProvider>();
+            final taskProvider = context.read<TaskProvider>();
+            final today = DateTime.now();
+
+            // Set selected date to today
+            dateProvider.setSelectedDate(today);
+
+            // Fetch today's tasks for Home screen
+            taskProvider.fetchTasksFromFirebase(today);
+          }
+          setState(() {
+            selectedindex = index;
+          });
+        },
+        children: widgetoptions,
+      ),
       floatingActionButton: floatbutton,
     );
   }

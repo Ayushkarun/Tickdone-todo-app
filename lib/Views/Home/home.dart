@@ -309,16 +309,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (description.isNotEmpty)
-                        Text(
-                          description,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontFamily: 'Poppins',
-                            fontSize: 13.sp,
+                          Text(
+                            description,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontFamily: 'Poppins',
+                              fontSize: 13.sp,
+                            ),
                           ),
-                        ),
-                        if (description.isNotEmpty)
-                        SizedBox(height: 8.h),
+                        if (description.isNotEmpty) SizedBox(height: 8.h),
                         Row(
                           children: [
                             if (category.isNotEmpty)

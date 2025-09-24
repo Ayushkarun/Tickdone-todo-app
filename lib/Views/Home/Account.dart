@@ -664,6 +664,14 @@ class _AccountState extends State<Account> {
                       color: Colors.white60,
                     ),
                   ),
+                  Text(
+                    'By Ayush Karun',
+                    style: TextStyle(
+                      fontSize: 7.sp,
+                      fontFamily: 'Poppins',
+                      color: Colors.white60,
+                    ),
+                  ),
                 ],
               ),
             ],

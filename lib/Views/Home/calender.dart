@@ -210,7 +210,16 @@ class _CalenderState extends State<Calender> {
     Widget mainContent;
 
     if (isLoading) {
-      mainContent = Center(child: CircularProgressIndicator());
+      mainContent = Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        child: LinearProgressIndicator(
+          backgroundColor:
+              Colors.grey[800], 
+          valueColor: const AlwaysStoppedAnimation<Color>(
+            Colors.deepPurple,
+          ), 
+        ),
+      );
     } else if (tasks.isEmpty) {
       mainContent = Emptytask();
     } else {
@@ -376,7 +385,7 @@ class _CalenderState extends State<Calender> {
             Padding(
               padding: EdgeInsets.only(left: 5.w, right: 5.w),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.5,
+                // height: MediaQuery.of(context).size.height * 0.5,
                 color: Colors.black,
                 child: TableCalendar(
                   headerStyle: HeaderStyle(
@@ -400,20 +409,20 @@ class _CalenderState extends State<Calender> {
                   ),
                   availableGestures: AvailableGestures.all,
                   selectedDayPredicate: (day) => isSameDay(day, selectedDate),
-                  rowHeight: 42.h,
+                  rowHeight: 40.h,
                   focusedDay: selectedDate,
                   calendarStyle: CalendarStyle(
                     defaultTextStyle: TextStyle(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                     ),
                     weekendTextStyle: TextStyle(
                       color: Colors.red,
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                     ),
                     outsideTextStyle: TextStyle(
                       color: Colors.grey,
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                     ),
                     todayDecoration: BoxDecoration(
                       color: Color(0xFF1C0E6F),
@@ -437,11 +446,11 @@ class _CalenderState extends State<Calender> {
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Poppins',
-                  fontSize: 15.sp,
+                  fontSize: 14.sp,
                 ),
               ),
             ),
-            SizedBox(height: 5.h),
+            SizedBox(height: 4.h),
             mainContent,
           ],
         ),
