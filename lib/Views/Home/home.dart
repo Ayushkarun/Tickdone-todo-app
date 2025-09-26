@@ -13,6 +13,7 @@ import 'package:tickdone/Views/Home/Progressscreen.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -423,17 +424,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         if (success) {
                           _valueNotifier.value =
                               taskProvider.calculateProgress();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              behavior: SnackBarBehavior.floating,
-                              content: AwesomeSnackbarContent(
-                                title: 'Success!',
-                                message: 'Task deleted successfully!',
-                                contentType: ContentType.warning,
-                              ),
-                            ),
+                          Mysnackbar.detail(
+                            context,
+                            title: 'Success!',
+                            message: 'Task deleted successfully!',
+                            contentType: ContentType.warning,
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
