@@ -10,6 +10,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Services/Notification/notification_service.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class EditTask extends StatefulWidget {
   final Map taskToEdit;
@@ -159,17 +160,11 @@ class _EditTaskState extends State<EditTask> {
 
       if (response.statusCode == 200) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              behavior: SnackBarBehavior.floating,
-              content: AwesomeSnackbarContent(
-                title: 'Success',
-                message: 'Task Updated Successfully!',
-                contentType: ContentType.success,
-              ),
-            ),
+          Mysnackbar.detail(
+            context,
+            title: 'Success',
+            message: 'Task Updated Successfully!',
+            contentType: ContentType.success,
           );
 
           final taskProvider = Provider.of<TaskProvider>(
@@ -209,33 +204,21 @@ class _EditTaskState extends State<EditTask> {
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              behavior: SnackBarBehavior.floating,
-              content: AwesomeSnackbarContent(
-                title: 'Oh Snap!',
-                message: 'Failed to update task. Please try again.',
-                contentType: ContentType.failure,
-              ),
-            ),
+          Mysnackbar.detail(
+            context,
+            title: 'Oh Snap!',
+            message: 'Failed to update task. Please try again.',
+            contentType: ContentType.failure,
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'Oh Snap!',
-              message: 'Please check your Internet Connection',
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Oh Snap!',
+          message: 'Please check your Internet Connection',
+          contentType: ContentType.failure,
         );
       }
     }

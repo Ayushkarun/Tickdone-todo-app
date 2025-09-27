@@ -13,6 +13,7 @@ import 'package:tickdone/Views/Home/Progressscreen.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
+import 'package:tickdone/Views/Widget/loading.dart';
 import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Home extends StatefulWidget {
@@ -431,18 +432,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             contentType: ContentType.warning,
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              behavior: SnackBarBehavior.floating,
-                              content: AwesomeSnackbarContent(
-                                title: 'Oh Snap!',
-                                message:
-                                    'Failed to delete task. Please try again.',
-                                contentType: ContentType.failure,
-                              ),
-                            ),
+                          Mysnackbar.detail(
+                            context,
+                            title: 'Oh Snap!',
+                            message: 'Failed to delete task. Please try again.',
+                            contentType: ContentType.failure,
                           );
                         }
                       },
@@ -551,63 +545,3 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 }
 
-class Taskskeleton extends StatelessWidget {
-  const Taskskeleton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade800,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-          ),
-          SizedBox(width: 12.w),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SkeletonBox(width: 100.w, height: 16.h),
-                SizedBox(height: 8.h),
-                SkeletonBox(height: 14.h),
-                SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    SkeletonBox(width: 60.w, height: 14.h),
-                    SizedBox(width: 12.w),
-                    SkeletonBox(width: 60.w, height: 14.h),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SkeletonBox extends StatelessWidget {
-  final double? height, width;
-  const SkeletonBox({super.key, this.height, this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height ?? 16.h,
-      width: width ?? double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-    );
-  }
-}

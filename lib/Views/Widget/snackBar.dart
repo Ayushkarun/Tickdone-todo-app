@@ -21,18 +21,3 @@ class Mysnackbar {
     ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 }
-
-/*
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              behavior: SnackBarBehavior.floating,
-                              content: AwesomeSnackbarContent(
-                                title: 'Success!',
-                                message: 'Task deleted successfully!',
-                                contentType: ContentType.warning,
-                              ),
-                            ),
-                          );
-*/

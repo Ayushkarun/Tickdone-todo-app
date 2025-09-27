@@ -11,6 +11,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Views/Home/Createprofile.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -78,17 +79,11 @@ class _RegisterState extends State<Register> {
           ),
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Register Successful!',
-              message: 'Welcome !',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Register Successful!',
+          message: 'Welcome !',
+          contentType: ContentType.success,
         );
       } else {
         // Error occurred
@@ -106,32 +101,21 @@ class _RegisterState extends State<Register> {
         }
 
         // Show snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Register Failed!',
-              message: displayMessage,
-              contentType: ContentType.failure,
-            ),
-          ),
+
+        Mysnackbar.detail(
+          context,
+          title: 'Register Failed!',
+          message: displayMessage,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       // Network error or unexpected error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Error!',
-            message: 'Something went wrong. Please try again.',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error!',
+        message: 'Something went wrong. Please try again.',
+        contentType: ContentType.failure,
       );
     } finally {
       setState(() {
@@ -203,18 +187,11 @@ class _RegisterState extends State<Register> {
             },
           ),
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Register Successful!',
-              message: 'Welcome !',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Register Successful!',
+          message: 'Welcome !',
+          contentType: ContentType.success,
         );
       } else {
         setState(() {
@@ -224,34 +201,22 @@ class _RegisterState extends State<Register> {
         final data = json.decode(response.body);
         final message =
             data['error']['message'] ?? 'An unknown error occurred.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'Register Failure!',
-              message: message,
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Register Failure!',
+          message: message,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-          content: AwesomeSnackbarContent(
-            title: 'Error',
-            message: 'An error occurred: ${e.toString()}',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error',
+        message: 'An error occurred: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     }
   }

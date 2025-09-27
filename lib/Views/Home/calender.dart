@@ -10,6 +10,7 @@ import 'package:tickdone/Services/Provider/date_provider.dart';
 import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Views/Home/Emptytaskpage.dart';
 import 'package:tickdone/Views/Task/Taskview.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 // import 'package:tickdone/Services/Api/api_service.dart';
 // import 'package:http/http.dart' as http;
 
@@ -213,11 +214,8 @@ class _CalenderState extends State<Calender> {
       mainContent = Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
         child: LinearProgressIndicator(
-          backgroundColor:
-              Colors.grey[800], 
-          valueColor: const AlwaysStoppedAnimation<Color>(
-            Colors.deepPurple,
-          ), 
+          backgroundColor: Colors.grey[800],
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurple),
         ),
       );
     } else if (tasks.isEmpty) {
@@ -341,30 +339,18 @@ class _CalenderState extends State<Calender> {
                   onPressed: () async {
                     final success = await taskProvider.deleteTask(taskId);
                     if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          behavior: SnackBarBehavior.floating,
-                          content: AwesomeSnackbarContent(
-                            title: 'Success!',
-                            message: 'Task deleted successfully!',
-                            contentType: ContentType.success,
-                          ),
-                        ),
+                      Mysnackbar.detail(
+                        context,
+                        title: 'Success!',
+                        message: 'Task deleted successfully!',
+                        contentType: ContentType.success,
                       );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          behavior: SnackBarBehavior.floating,
-                          content: AwesomeSnackbarContent(
-                            title: 'Oh Snap!',
-                            message: 'Failed to delete task. Please try again.',
-                            contentType: ContentType.failure,
-                          ),
-                        ),
+                      Mysnackbar.detail(
+                        context,
+                        title: 'Oh Snap!',
+                        message: 'Failed to delete task. Please try again.',
+                        contentType: ContentType.failure,
                       );
                     }
                   },

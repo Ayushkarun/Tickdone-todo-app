@@ -22,7 +22,6 @@ class _NewtaskState extends State<Newtask> {
 
   final TextEditingController titlecontroller = TextEditingController();
   final TextEditingController descriptioncontroller = TextEditingController();
-
   // A variable to hold the selected date for a single-day task.
   DateTime? selectedDate;
   // A variable to hold the selected time. It starts as null.

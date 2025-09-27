@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 import 'bottomnav.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,8 +61,10 @@ class _CreateprofileState extends State<Createprofile> {
         }),
       );
       if (response.statusCode == 200) {
-
-       Provider.of<UserProvider>(context, listen: false).setUserName(userName.text.trim());
+        Provider.of<UserProvider>(
+          context,
+          listen: false,
+        ).setUserName(userName.text.trim());
 
         Navigator.pushReplacement(
           context,
@@ -79,31 +82,19 @@ class _CreateprofileState extends State<Createprofile> {
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'Failed',
-              message: 'Failed to save profile.Please try again',
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Failed',
+          message: 'Failed to save profile.Please try again',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          behavior: SnackBarBehavior.floating,
-          content: AwesomeSnackbarContent(
-            title: 'Error',
-            message: 'An error occurred. Check your connection',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error',
+        message: 'An error occurred. Check your connection',
+        contentType: ContentType.failure,
       );
     } finally {
       setState(() {

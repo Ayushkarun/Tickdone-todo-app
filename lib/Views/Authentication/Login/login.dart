@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Views/Home/bottomnav.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -110,17 +111,11 @@ class _LoginpageState extends State<Loginpage> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Success!',
-              message: 'Password reset link sent to your email.',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Success!',
+          message: 'Password reset link sent to your email.',
+          contentType: ContentType.success,
         );
       } else {
         final result = json.decode(response.body);
@@ -132,32 +127,20 @@ class _LoginpageState extends State<Loginpage> {
             displayMessage = "No user found with this email.";
           }
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Oh Snap!',
-              message: displayMessage,
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Oh Snap!',
+          message: displayMessage,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       // Handle network or other unexpected errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Error!',
-            message: 'Something went wrong. Please check your connection.',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error!',
+        message: 'Something went wrong. Please check your connection.',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -282,18 +265,11 @@ class _LoginpageState extends State<Loginpage> {
         passwordControllerlogin.clear();
 
         await checkprofileandNavigate();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Login Successful!',
-              message: 'Welcome back!',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Login Successful!',
+          message: 'Welcome back!',
+          contentType: ContentType.success,
         );
       } else {
         String displayMessage = "Login failed. Please try again.";
@@ -315,32 +291,20 @@ class _LoginpageState extends State<Loginpage> {
           }
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Login Failed!',
-              message: displayMessage,
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Login Failed!',
+          message: displayMessage,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       // If there's any unexpected issue (like network failure)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Error!',
-            message: 'Something went wrong. Please try again.',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error!',
+        message: 'Something went wrong. Please try again.',
+        contentType: ContentType.failure,
       );
     } finally {
       setState(() {
@@ -398,17 +362,11 @@ class _LoginpageState extends State<Loginpage> {
         await prefs.setString('userUID', result['localId']);
 
         await checkprofileandNavigate();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Register Successful!',
-              message: 'Welcome !',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Register Successful!',
+          message: 'Welcome !',
+          contentType: ContentType.success,
         );
       } else {
         setState(() {
@@ -418,17 +376,11 @@ class _LoginpageState extends State<Loginpage> {
         final data = json.decode(response.body);
         final message =
             data['error']['message'] ?? 'An unknown error occurred.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Login Failed!',
-              message: message,
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Login Failed!',
+          message: message,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
@@ -436,17 +388,11 @@ class _LoginpageState extends State<Loginpage> {
         isLoading = false;
       });
       // If anything else goes wrong, show a general error.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Error!',
-            message: 'An error occurred: ${e.toString()}',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error!',
+        message: 'An error occurred: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     }
   }

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Views/Authentication/Login/login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tickdone/Services/Provider/user_provider.dart';
+import 'package:tickdone/Views/Widget/snackBar.dart';
 import 'Aboutus.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Services/Api/api_service.dart';
@@ -69,17 +70,11 @@ class _AccountState extends State<Account> {
         body: json.encode({'requestType': 'PASSWORD_RESET', 'email': email}),
       );
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.transparent,
-            content: AwesomeSnackbarContent(
-              title: 'Success!',
-              message: 'Password Change Link sent to your mail',
-              contentType: ContentType.success,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'Success!',
+          message: 'Password Change Link sent to your mail',
+          contentType: ContentType.success,
         );
       } else {
         final result = json.decode(response.body);
@@ -91,31 +86,19 @@ class _AccountState extends State<Account> {
             displayMessage = "No user found with this email";
           }
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            behavior: SnackBarBehavior.floating,
-            content: AwesomeSnackbarContent(
-              title: 'oh snap!',
-              message: displayMessage,
-              contentType: ContentType.failure,
-            ),
-          ),
+        Mysnackbar.detail(
+          context,
+          title: 'oh snap!',
+          message: displayMessage,
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Error!',
-            message: 'Something went wrong.Please check network connection',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Error!',
+        message: 'Something went wrong.Please check network connection',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -297,35 +280,24 @@ class _AccountState extends State<Account> {
       }),
     );
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Success',
-            message: 'Name updated successfully!',
-            contentType: ContentType.success,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Success',
+        message: 'Name updated successfully!',
+        contentType: ContentType.success,
       );
+
       Provider.of<UserProvider>(context, listen: false).setUserName(newName);
       // _fetchUserProfile();
       // setState(() {
       //   _userName = newName;
       // });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.transparent,
-          content: AwesomeSnackbarContent(
-            title: 'Failed',
-            message: 'Failed to update Name',
-            contentType: ContentType.failure,
-          ),
-        ),
+      Mysnackbar.detail(
+        context,
+        title: 'Failed',
+        message: 'Failed to update Name',
+        contentType: ContentType.failure,
       );
     }
   }
