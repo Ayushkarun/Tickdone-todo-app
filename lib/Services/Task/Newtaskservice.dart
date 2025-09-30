@@ -1,33 +1,20 @@
 // In Newtaskservice.dart
 import 'dart:convert';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:tickdone/Model/newtask.dart';
 
 class Addnewtaskservice {
-  Future<void> addtasktofirebase(
-    Map<String, dynamic> taskdata,
-    BuildContext context,
-    String userId,
-  ) async {
+  Future<void> addtasktofirebase(Task task, BuildContext context) async {
     try {
-      if (taskdata.containsKey("date")) {
-        final dateValue = taskdata["date"];
-        if (dateValue is String && dateValue.isNotEmpty) {
-          final formattedDate = DateTime.parse(dateValue);
-          taskdata["date"] = {
-            "stringValue": DateFormat('yyyy-MM-dd').format(formattedDate),
-          };
-        }
-      }
-      taskdata['userId'] = {'stringValue': userId};
       final url = Uri.parse(Apiservice.task);
+
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'fields': taskdata}),
+        body: json.encode({'fields': task.toFirebaseJson()}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

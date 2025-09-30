@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-///validation snakbar
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,6 +9,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Views/Home/Createprofile.dart';
+import 'package:tickdone/Views/Widget/pageTransition.dart';
 import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Register extends StatefulWidget {
@@ -65,18 +64,7 @@ class _RegisterState extends State<Register> {
         confirmpasswordcontroller.clear();
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) => Createprofile(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+          FadeInTransition(page: const Createprofile()),
         );
 
         Mysnackbar.detail(
@@ -173,19 +161,7 @@ class _RegisterState extends State<Register> {
 
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    const Createprofile(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+          FadeInTransition(page: const Createprofile()),
         );
         Mysnackbar.detail(
           context,
@@ -566,22 +542,7 @@ class _RegisterState extends State<Register> {
                             confirmpasswordcontroller.clear();
                             Navigator.push(
                               context,
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        Loginpage(),
-                                transitionsBuilder: (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                              ),
+                              FadeInTransition(page: const Loginpage()),
                             );
                           },
                           style: ElevatedButton.styleFrom(

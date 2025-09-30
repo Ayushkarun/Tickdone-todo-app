@@ -9,6 +9,7 @@ import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Services/Task/Newtaskservice.dart';
 import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Notification/notification_service.dart';
+import 'package:tickdone/Model/newtask.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});
@@ -331,39 +332,25 @@ class _NewtaskState extends State<Newtask> {
                                 // Stop the function here so the task isn't saved.
                                 return;
                               }
-                              // 2. If the form is valid, then proceed with creating and saving the task.
-                              final taskData = {
-                                'title': {'stringValue': titlecontroller.text},
-                                'description': {
-                                  'stringValue': descriptioncontroller.text,
-                                },
-                                'category': {
-                                  'stringValue': selectedCategory ?? '',
-                                },
-                                'time': {
-                                  'stringValue':
-                                      selectedTime != null
-                                          ? selectedTime!.format(context)
-                                          : '',
-                                },
-                                'userId': {'stringValue': userUid},
-                              };
-
-                              // 3. Conditionally add a single date based on user selection.
-                              if (selectedDate != null) {
-                                taskData['date'] = {
-                                  'stringValue': DateFormat(
-                                    'yyyy-MM-dd',
-                                  ).format(selectedDate!),
-                                };
-                              }
+                              final task = Task(
+                                title: titlecontroller.text,
+                                description: descriptioncontroller.text,
+                                category: selectedCategory ?? '',
+                                date: DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(selectedDate!),
+                                time:
+                                    selectedTime != null
+                                        ? selectedTime!.format(context)
+                                        : '',
+                                userId: userUid,
+                              );
 
                               // 4. Call the service to save the task.
                               final taskService = Addnewtaskservice();
                               await taskService.addtasktofirebase(
-                                taskData,
+                                task,
                                 context,
-                                userUid,
                               );
                               // Get the TaskProvider instance
                               final taskProvider = Provider.of<TaskProvider>(

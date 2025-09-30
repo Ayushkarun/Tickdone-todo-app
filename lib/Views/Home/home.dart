@@ -384,9 +384,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                           );
                           if (success) {
                             // Cancel the notification when task is marked done (checkbox clicked)
-                            // 💡 NEW: Cancel the notification when task is marked as completed.
                             if (value) {
-                              // Only cancel if the checkbox is checked (task completed)
                               final taskTitle =
                                   taskItem['fields']['title']['stringValue'];
                               NotificationService().notificationsPlugin.cancel(

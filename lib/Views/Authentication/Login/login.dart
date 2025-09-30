@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Views/Home/bottomnav.dart';
+import 'package:tickdone/Views/Widget/pageTransition.dart';
 import 'package:tickdone/Views/Widget/snackBar.dart';
 
 class Loginpage extends StatefulWidget {
@@ -47,51 +48,17 @@ class _LoginpageState extends State<Loginpage> {
       if (response.statusCode == 404) {
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    const Createprofile(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+          FadeInTransition(page: const Createprofile()),
         );
       } else if (response.statusCode == 200) {
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) => const Bottomnav(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+          FadeInTransition(page: const Bottomnav()),
         );
       } else {
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) => const Bottomnav(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
+          FadeInTransition(page: const Bottomnav()),
         );
       }
     } catch (e) {
@@ -690,25 +657,7 @@ class _LoginpageState extends State<Loginpage> {
                               passwordControllerlogin.clear();
                               Navigator.push(
                                 context,
-                                PageRouteBuilder(
-                                  pageBuilder:
-                                      (
-                                        context,
-                                        animation,
-                                        secondaryAnimation,
-                                      ) => const Register(),
-                                  transitionsBuilder: (
-                                    context,
-                                    animation,
-                                    secondaryAnimation,
-                                    child,
-                                  ) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-                                  },
-                                ),
+                                FadeInTransition(page: const Register()),
                               );
                             },
                             style: ElevatedButton.styleFrom(
