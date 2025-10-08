@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _initializeUserandNavigate();
-    // checkSessionAndNavigate();
   }
 
   Future<void> _initializeUserandNavigate() async {

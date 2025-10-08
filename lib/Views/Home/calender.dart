@@ -46,7 +46,6 @@ class _CalenderState extends State<Calender> {
   }
 
   void onDayselect(DateTime day, DateTime focusedDay) {
-    // You no longer need setState here since the provider handles the state change
     Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
     Provider.of<TaskProvider>(
       context,

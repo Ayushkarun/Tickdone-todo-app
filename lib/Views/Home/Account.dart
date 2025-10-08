@@ -20,12 +20,11 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  String? _userName; // To store the user's name
-  bool _isProfileLoading = true; // To show a loading spinner
+  String? _userName;
+  bool _isProfileLoading = true; 
   @override
   void initState() {
     super.initState();
-    // Fetch the user's profile as soon as the widget is created
     _fetchUserProfile();
   }
 
@@ -564,29 +563,11 @@ class _AccountState extends State<Account> {
                           ),
                         ),
                       ),
-                      // TextButton(
-                      //   onPressed: () {
-                      //     NotificationService().showNotification(
-                      //       title: 'Task Pending',
-                      //       body: 'Dont forget to complete it!',
-                      //     );
-                      //   },
-                      //   child: Text(
-                      //     'Notification',
-                      //     style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontFamily: 'Poppins',
-                      //       fontSize: 16.sp,
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
               ),
 
-              // --- THE STICKY FOOTER CONTENT GOES HERE ---
-              // It is outside the Expanded widget, so it's pushed to the bottom.
               Column(
                 children: [
                   TextButton.icon(

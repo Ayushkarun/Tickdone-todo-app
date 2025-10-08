@@ -18,7 +18,6 @@ class Progressscreen extends StatefulWidget {
 
 class _ProgressscreenState extends State<Progressscreen> {
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
-  // 1. Create a controller for the screenshot package
   final _screenshotController = ScreenshotController();
 
   @override
@@ -36,23 +35,21 @@ class _ProgressscreenState extends State<Progressscreen> {
     super.dispose();
   }
 
-  // 2. Create the function to capture and share the widget
   void _shareProgress() async {
-    // Capture the widget as a Uint8List (a list of numbers representing the image)
     final image = await _screenshotController.capture();
 
     if (image != null) {
-      // Get a temporary directory on the device to save the image
       final directory = await getTemporaryDirectory();
-      // Create a unique file name using the current time
+
       final fileName = 'progress_${DateTime.now().millisecondsSinceEpoch}.png';
-      // Create the file in the temporary directory
+
       final imagePath = await File('${directory.path}/$fileName').create();
-      // Write the image data to the file
+
       await imagePath.writeAsBytes(image);
 
-      // Use the share_plus package to share the file
-      await Share.shareXFiles([XFile(imagePath.path)], text: 'Check out my progress! 🎯');
+      await Share.shareXFiles([
+        XFile(imagePath.path),
+      ], text: 'Check out my progress! 🎯');
     }
   }
 
@@ -94,7 +91,6 @@ class _ProgressscreenState extends State<Progressscreen> {
 
               return Column(
                 children: [
-                  // 3. Wrap the content you want to share with the Screenshot widget
                   Screenshot(
                     controller: _screenshotController,
                     child: Center(
@@ -104,7 +100,6 @@ class _ProgressscreenState extends State<Progressscreen> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Gradient background circles
                             Positioned(
                               top: -30.h,
                               left: -80.w,
@@ -174,31 +169,31 @@ class _ProgressscreenState extends State<Progressscreen> {
                                         valueListenable: _valueNotifier,
                                         builder:
                                             (_, double value, __) => Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              "${value.toInt()}%",
-                                              style: TextStyle(
-                                                fontSize: 30.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                fontFamily: 'Poppins',
-                                              ),
-                                            ),
-                                            SizedBox(height: 8.h),
-                                            Text(
-                                              "Completed",
-                                              style: TextStyle(
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(
-                                                  0xffeeeeee,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  "${value.toInt()}%",
+                                                  style: TextStyle(
+                                                    fontSize: 30.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontFamily: 'Poppins',
+                                                  ),
                                                 ),
-                                                fontFamily: 'Poppins',
-                                              ),
+                                                SizedBox(height: 8.h),
+                                                Text(
+                                                  "Completed",
+                                                  style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(
+                                                      0xffeeeeee,
+                                                    ),
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
                                       ),
                                     ),
                                   ),
@@ -274,8 +269,7 @@ class _ProgressscreenState extends State<Progressscreen> {
                   ),
                   SizedBox(height: 20.h),
                   TextButton.icon(
-                    // 4. Call the new function when the button is pressed
-                    onPressed: _shareProgress, 
+                    onPressed: _shareProgress,
                     icon: Icon(Icons.share, color: Colors.white, size: 26.sp),
                     label: Text(
                       'Share',
