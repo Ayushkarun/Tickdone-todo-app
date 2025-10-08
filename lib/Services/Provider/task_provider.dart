@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:http/http.dart' as http;
 
-
 class TaskProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _tasks = [];
   bool _isLoading = false;
@@ -20,8 +19,6 @@ class TaskProvider extends ChangeNotifier {
       final taskIndex = _tasks.indexWhere((task) => task['id'] == taskId);
       if (taskIndex == -1) return false;
 
-     
-  
       final url = Uri.parse(
         '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}&updateMask.fieldPaths=isCompleted',
       );
@@ -157,7 +154,8 @@ class TaskProvider extends ChangeNotifier {
       return false;
     }
   }
-    double calculateProgress() {
+
+  double calculateProgress() {
     if (_tasks.isEmpty) {
       return 0.0;
     }

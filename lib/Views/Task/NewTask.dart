@@ -9,7 +9,7 @@ import 'package:tickdone/Services/Provider/task_provider.dart';
 import 'package:tickdone/Services/Task/Newtaskservice.dart';
 import 'package:intl/intl.dart';
 import 'package:tickdone/Services/Notification/notification_service.dart';
-import 'package:tickdone/Model/newtask.dart';
+import 'package:tickdone/Model/task.dart';
 
 class Newtask extends StatefulWidget {
   const Newtask({super.key});
@@ -23,15 +23,10 @@ class _NewtaskState extends State<Newtask> {
 
   final TextEditingController titlecontroller = TextEditingController();
   final TextEditingController descriptioncontroller = TextEditingController();
-  // A variable to hold the selected date for a single-day task.
   DateTime? selectedDate;
-  // A variable to hold the selected time. It starts as null.
   Time? selectedTime;
-  // A list of booleans to track which toggle button is selected.
-  // We'll keep only 'Single Day' active.
-  List<bool> isSelected = [true];
 
-  // A list of pre-defined categories.
+  List<bool> isSelected = [true];
   final List<String> category = [
     'Work',
     'Personal',
@@ -40,7 +35,6 @@ class _NewtaskState extends State<Newtask> {
     'Skill',
     'Home',
   ];
-  // A single string to hold the selected category.
   String? selectedCategory;
 
   // Simple function to format a DateTime object into "day-month-year".

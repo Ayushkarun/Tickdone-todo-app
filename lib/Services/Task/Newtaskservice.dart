@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickdone/Services/Api/api_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:tickdone/Model/newtask.dart';
+import 'package:tickdone/Model/task.dart';
 
 class Addnewtaskservice {
   Future<void> addtasktofirebase(Task task, BuildContext context) async {

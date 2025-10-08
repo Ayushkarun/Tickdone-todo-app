@@ -50,15 +50,12 @@ class _RegisterState extends State<Register> {
           "returnSecureToken": true,
         }),
       );
-
       final result = json.decode(response.body);
-
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('idToken', result['idToken']);
         await prefs.setString('refreshToken', result['refreshToken']);
         await prefs.setString('userUID', result['localId']);
-        // Success
         emailController.clear();
         passwordController.clear();
         confirmpasswordcontroller.clear();
@@ -66,7 +63,6 @@ class _RegisterState extends State<Register> {
           context,
           FadeInTransition(page: const Createprofile()),
         );
-
         Mysnackbar.detail(
           context,
           title: 'Register Successful!',
@@ -74,10 +70,8 @@ class _RegisterState extends State<Register> {
           contentType: ContentType.success,
         );
       } else {
-        // Error occurred
         final errorMessage = result["error"]["message"];
         String displayMessage = "Registration failed. Please try again.";
-
         if (errorMessage == "EMAIL_EXISTS") {
           displayMessage = "Email already exists. Try logging in.";
         } else if (errorMessage == "WEAK_PASSWORD") {
@@ -87,9 +81,6 @@ class _RegisterState extends State<Register> {
         } else if (errorMessage == "TOO_MANY_ATTEMPTS_TRY_LATER") {
           displayMessage = "Too many attempts. Try again later.";
         }
-
-        // Show snackbar
-
         Mysnackbar.detail(
           context,
           title: 'Register Failed!',
@@ -98,7 +89,6 @@ class _RegisterState extends State<Register> {
         );
       }
     } catch (e) {
-      // Network error or unexpected error
       Mysnackbar.detail(
         context,
         title: 'Error!',
@@ -119,7 +109,6 @@ class _RegisterState extends State<Register> {
       });
       // Force show account chooser every time
       await GoogleSignIn().signOut();
-      // Choose an account
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         setState(() {
@@ -173,7 +162,6 @@ class _RegisterState extends State<Register> {
         setState(() {
           isLoading = false;
         });
-        // If Firebase gives an error, show it.
         final data = json.decode(response.body);
         final message =
             data['error']['message'] ?? 'An unknown error occurred.';
@@ -214,7 +202,6 @@ class _RegisterState extends State<Register> {
           SafeArea(
             child: SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-
               padding: EdgeInsets.all(11.w),
               child: Form(
                 key: key,
@@ -245,7 +232,6 @@ class _RegisterState extends State<Register> {
                         fontSize: 14.sp,
                       ),
                     ),
-
                     SizedBox(height: 10.h),
                     Text(
                       'E-mail',

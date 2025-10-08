@@ -26,123 +26,6 @@ class _CalenderState extends State<Calender> {
   // bool isLoading = true;
   DateTime today = DateTime.now();
 
-  // Future<void> fetchTaskfromfirebase(DateTime selectedDate) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final userUid = prefs.getString('userUID');
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   try {
-  //     final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-  //     final url = Uri.parse(
-  //       '${Apiservice.firestoreBaseUrl}:runQuery?key=${Apiservice.apiKey}',
-  //     );
-  //     final singleDayQueryBody = {
-  //       "structuredQuery": {
-  //         "from": [
-  //           {"collectionId": "tasks"},
-  //         ],
-  //         "where": {
-  //           "compositeFilter": {
-  //             "op": "AND",
-  //             "filters": [
-  //               {
-  //                 "fieldFilter": {
-  //                   "field": {"fieldPath": "date"},
-  //                   "op": "EQUAL",
-  //                   "value": {"stringValue": formattedDate},
-  //                 },
-  //               },
-  //               {
-  //                 "fieldFilter": {
-  //                   "field": {"fieldPath": "userId"},
-  //                   "op": "EQUAL",
-  //                   "value": {"stringValue": userUid},
-  //                 },
-  //               },
-  //             ],
-  //           },
-  //         },
-  //       },
-  //     };
-  //     final singleDayResponse = await http.post(
-  //       url,
-  //       headers: {"Content-Type": "application/json"},
-  //       body: json.encode(singleDayQueryBody),
-  //     );
-  //     task.clear();
-
-  //     if (singleDayResponse.statusCode == 200) {
-  //       final List singleDayData = json.decode(singleDayResponse.body);
-  //       for (var item in singleDayData) {
-  //         if (item.containsKey('document')) {
-  //           final doc = item['document'];
-  //           final taskId = doc['name'].split('/').last;
-  //           task.add({'id': taskId, 'fields': doc['fields']});
-  //         }
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching task:$e");
-  //     task.clear();
-  //   } finally {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
-
-  // Future<void> deleteTask(String taskId) async {
-  //   try {
-  //     final url = Uri.parse(
-  //       '${Apiservice.firestoreBaseUrl}/tasks/$taskId?key=${Apiservice.apiKey}',
-  //     );
-  //     final response = await http.delete(url);
-
-  //     if (response.statusCode == 200) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           elevation: 0,
-  //           backgroundColor: Colors.transparent,
-  //           behavior: SnackBarBehavior.floating,
-  //           content: AwesomeSnackbarContent(
-  //             title: 'Success!',
-  //             message: 'Task deleted successfully!',
-  //             contentType: ContentType.success,
-  //           ),
-  //         ),
-  //       );
-  //       // After deleting, we re-fetch the tasks for the current date.
-  //       fetchTaskfromfirebase(today);
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           elevation: 0,
-  //           backgroundColor: Colors.transparent,
-  //           behavior: SnackBarBehavior.floating,
-  //           content: AwesomeSnackbarContent(
-  //             title: 'Oh Snap!',
-  //             message: 'Failed to delete task. Please try again.',
-  //             contentType: ContentType.failure,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         elevation: 0,
-  //         backgroundColor: Colors.transparent,
-  //         behavior: SnackBarBehavior.floating,
-  //         content: AwesomeSnackbarContent(
-  //           title: 'Oh Snap!',
-  //           message: 'An error occurred while deleting the task: $e',
-  //           contentType: ContentType.failure,
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
   Color getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'work':
@@ -171,19 +54,6 @@ class _CalenderState extends State<Calender> {
     ).fetchTasksFromFirebase(day);
   }
 
-  // void onDayselect(DateTime day, DateTime focusedDay) {
-  //   setState(() {
-  //     today = day;
-  //   });
-  //   // Tell the DateProvider about the new selected date.
-  //   Provider.of<DateProvider>(context, listen: false).setSelectedDate(day);
-  //   // Fetch the tasks for this new date.
-  //   // fetchTaskfromfirebase(day);
-  //   Provider.of<TaskProvider>(
-  //     context,
-  //     listen: false,
-  //   ).fetchTasksFromFirebase(day);
-  // }
 
   @override
   void initState() {
@@ -240,7 +110,7 @@ class _CalenderState extends State<Calender> {
                 side: const BorderSide(color: Color(0xFF1C0E6F), width: 1.5),
               ),
               child: ListTile(
-                onTap: () async {
+                onTap: () async {                  
                   await Navigator.push(
                     context,
                     PageRouteBuilder(
